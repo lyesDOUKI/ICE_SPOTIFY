@@ -1,0 +1,4 @@
+#ignorer les fichiers mp3 dans le projet
+musics/*.mp3
+server-side/musics/*.mp3
+client-side/musics/*.mp3
