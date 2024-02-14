@@ -20,7 +20,6 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
             destination = properties.getProperty(DESTINATION_PROPERTY);
         } catch (IOException e) {
             e.printStackTrace();
-            // Default value or handle exception accordingly
         }
     }
 
