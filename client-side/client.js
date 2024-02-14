@@ -1,17 +1,29 @@
+const traitementMP3 = require('./filesutils/traitementMP3');
 const Ice = require("ice").Ice;
-const Demo = require("./generated/Printer").Demo;
- 
+const Spotify = require("./generated/Spotify").Spotify;
+//appeler la fonction
 (async function()
 {
     let communicator;
     try
     {
+        const fileData = traitementMP3.traitementMP3();
+        const nomFichier = traitementMP3.nomFichier();
         communicator = Ice.initialize();
-        const base = communicator.stringToProxy("SimplePrinter:default -p 10000");
-        const printer = await Demo.PrinterPrx.checkedCast(base);
-        if(printer)
+        const base = communicator.stringToProxy("SpotifyAdapter:default -p 10000");
+        const SpotifyManager = await Spotify.SpotifyManagerPrx.checkedCast(base);
+        if(SpotifyManager)
         {
-            await printer.printString("Salut Java! c'est ton ami JavaScript!");
+            console.log("je récupere spotifyManager");
+            console.log("uploading...");
+            const buffer = Buffer.from(fileData);
+            chunkSize = 1024;
+            for (let i = 0; i < buffer.length; i += chunkSize) {
+                sequence = buffer.slice(i, i + chunkSize);
+                await SpotifyManager.upload(sequence, nomFichier);
+            }
+            await SpotifyManager.upload(sequence, nomFichier);
+            console.log("upload OK");
         }
         else
         {
@@ -30,4 +42,4 @@ const Demo = require("./generated/Printer").Demo;
             await communicator.destroy();
         }
     }
-}());
+})();

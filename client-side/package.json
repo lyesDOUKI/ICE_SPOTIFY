@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "ice": "^3.7.100"
+    "ice": "^3.7.100",
+    "mp3-parser": "^0.3.0",
+    "web-audio-api": "^0.2.2"
   }
 }

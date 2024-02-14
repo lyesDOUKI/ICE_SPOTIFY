@@ -1,4 +1,4 @@
-/*project(':Demo') {
+project(':Spotify') {
     apply plugin: 'java'
 
     repositories {
@@ -17,7 +17,7 @@
             }
         }
     }
-}*/
+}
 
 project(':serverjava') {
     apply plugin: 'java'
@@ -27,14 +27,15 @@ project(':serverjava') {
     }
     dependencies {
         implementation 'com.zeroc:ice:3.7.2'
+        implementation project(':Spotify')
     }
     compileJava {
-                //classpath += project(':Demo').sourceSets.main.output
+                classpath += project(':Spotify').sourceSets.main.output
             }
     jar {
         manifest {
             attributes(
-                "Main-Class": 'Server', 
+                "Main-Class": 'MainServer',
                 "Class-Path": configurations.runtimeClasspath.resolve().
                 collect { it.toURI() }.join(' ')
             )

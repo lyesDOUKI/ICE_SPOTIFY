@@ -1,8 +1,0 @@
-nomFicher=System Of A Down - Toxicity (Official HD Video)
-titre:Toxicity
-artiste:System of Down
-album:Toxicity
-genre:rock
-annee:2001
-duree:3m38
-chemin:/home/lyes/Bureau/middlwareApp/spotify/musics/

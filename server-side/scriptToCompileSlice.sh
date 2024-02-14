@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Déplacement vers le dossier slicesfiles
-cd slicesfiles || exit
+cd slicefiles || exit
 
 #parcourir tous les fichiers .ice
 for fichier in *.ice; do
@@ -19,7 +19,7 @@ for fichier in *.ice; do
             cd "$dossier"
             mkdir -p src/main/java
             cd ..
-            cd slicesfiles
+            cd slicefiles
             cp "$dossier"*.java "../$dossier/src/main/java/"
         fi
         # Suppression du dossier

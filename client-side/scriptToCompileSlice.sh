@@ -1,7 +1,7 @@
 #!/bin/bash
 #compiler les fichiers .ice
 
-cd slicesfiles
+cd slicefiles
 #parcourir tout les fichiers .ice
 for file in *.ice
 do

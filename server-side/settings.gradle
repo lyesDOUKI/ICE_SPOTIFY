@@ -6,4 +6,5 @@
  */
 
 rootProject.name = 'server-side'
+include 'Spotify'
 include 'serverjava'

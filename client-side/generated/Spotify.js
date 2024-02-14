@@ -26,31 +26,6 @@
 
     Slice.defineSequence(Spotify, "dataHelper", "Ice.ByteHelper", true);
 
-    Spotify.MusicData = class
-    {
-        constructor(bytes = null)
-        {
-            this.bytes = bytes;
-        }
-
-        _write(ostr)
-        {
-            Spotify.dataHelper.write(ostr, this.bytes);
-        }
-
-        _read(istr)
-        {
-            this.bytes = Spotify.dataHelper.read(istr);
-        }
-
-        static get minWireSize()
-        {
-            return  1;
-        }
-    };
-
-    Slice.defineStruct(Spotify.MusicData, true, true);
-
     const iceC_Spotify_SpotifyManager_ids = [
         "::Ice::Object",
         "::Spotify::SpotifyManager"
@@ -66,7 +41,7 @@
 
     Slice.defineOperations(Spotify.SpotifyManager, Spotify.SpotifyManagerPrx, iceC_Spotify_SpotifyManager_ids, 1,
     {
-        "play": [, , , , , [[Spotify.MusicData], [7]], , , , ]
+        "upload": [, , , , , [["Spotify.dataHelper"], [7]], , , , ]
     });
     exports.Spotify = Spotify;
 }
