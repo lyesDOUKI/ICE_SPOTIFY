@@ -1,53 +1,38 @@
-const traitementMP3 = require('./filesutils/traitementMP3');
-const Ice = require("ice").Ice;
-const Spotify = require("./generated/Spotify").Spotify;
-//appeler la fonction
-const readline = require('readline');
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const traiterChanson = require('./ice/ice-upload');
+const app = express();
+const PORT = 3000;
 
-let nomChanson = ""; // Utilisation de let pour permettre la réassignation
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
+// Configurer le stockage pour les fichiers MP3
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'data/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
 });
 
-rl.question("Saisir le nom d'une chanson : ", (name) => {
-  nomChanson = name + ".mp3";
-  rl.close();
+
+const upload = multer({ storage: storage });
+
+
+app.use(express.static('public'));
+
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-(async function() {
-  let communicator;
-  try {
-    // Attendre que l'utilisateur saisisse une valeur avant de continuer
-    await new Promise((resolve) => rl.on('close', resolve));
+// Gérer l'upload de fichiers
+app.post('/upload', upload.single('mp3file'), async (req, res) => {
+    const nomChanson = req.file.originalname;
+    await traiterChanson(nomChanson);
+    res.redirect('/');
+});
 
-    const fileData = traitementMP3.traitementMP3(nomChanson);
-    
-    communicator = Ice.initialize();
-    const base = communicator.stringToProxy("SpotifyAdapter:default -p 10000");
-    const SpotifyManager = await Spotify.SpotifyManagerPrx.checkedCast(base);
-    if(SpotifyManager) {
-      console.log("Je récupère SpotifyManager");
-      console.log("Uploading...");
-      const buffer = Buffer.from(fileData);
-      const chunkSize = 1024;
-      const startTime = Date.now();
-      for (let i = 0; i < buffer.length; i += chunkSize) {
-        const sequence = buffer.slice(i, i + chunkSize);
-        await SpotifyManager.upload(sequence, nomChanson);
-      }
-      const uploadTime = (Date.now() - startTime) / 1000;
-      console.log("Upload terminé.");
-      console.log("Chanson uploadée en", uploadTime, "secondes.");
-    } else {
-      console.log("Proxy invalide");
-    }
-  } catch(ex) {
-    console.log(ex.toString());
-    process.exitCode = 1;
-  } finally {
-    if(communicator) {
-      await communicator.destroy();
-    }
-  }
-})();
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});

@@ -1,2 +1,4 @@
 #enlever les fichiers mp3
 *.mp3
+#enlever le repertoire node_modules
+node_modules/
