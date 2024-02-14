@@ -31,12 +31,14 @@ rl.question("Saisir le nom d'une chanson : ", (name) => {
       console.log("Uploading...");
       const buffer = Buffer.from(fileData);
       const chunkSize = 1024;
+      const startTime = Date.now();
       for (let i = 0; i < buffer.length; i += chunkSize) {
         const sequence = buffer.slice(i, i + chunkSize);
         await SpotifyManager.upload(sequence, nomChanson);
       }
-      
+      const uploadTime = (Date.now() - startTime) / 1000;
       console.log("Upload terminé.");
+      console.log("Chanson uploadée en", uploadTime, "secondes.");
     } else {
       console.log("Proxy invalide");
     }
