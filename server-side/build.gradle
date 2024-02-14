@@ -1,0 +1,43 @@
+/*project(':Demo') {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+    
+    dependencies {
+        implementation 'com.zeroc:ice:3.7.2'
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs 'src/main/java'
+                include '*.java'
+            }
+        }
+    }
+}*/
+
+project(':serverjava') {
+    apply plugin: 'java'
+
+    repositories {
+    mavenCentral()
+    }
+    dependencies {
+        implementation 'com.zeroc:ice:3.7.2'
+    }
+    compileJava {
+                //classpath += project(':Demo').sourceSets.main.output
+            }
+    jar {
+        manifest {
+            attributes(
+                "Main-Class": 'Server', 
+                "Class-Path": configurations.runtimeClasspath.resolve().
+                collect { it.toURI() }.join(' ')
+            )
+        }
+    }
+}
