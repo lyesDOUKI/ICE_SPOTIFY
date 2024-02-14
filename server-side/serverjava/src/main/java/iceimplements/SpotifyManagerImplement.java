@@ -1,16 +1,14 @@
 package iceimplements;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.Properties;
 
 public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     private static final String CONFIG_FILE = "config.properties";
+    private static final String DESTINATION_PROPERTY = "destination.directory";
     private String destination = "";
+
     public SpotifyManagerImplement() {
         loadConfiguration();
     }
@@ -19,30 +17,19 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         try {
             Properties properties = new Properties();
             properties.load(getClass().getClassLoader().getResourceAsStream(CONFIG_FILE));
-            destination = properties.getProperty("destination.directory");
+            destination = properties.getProperty(DESTINATION_PROPERTY);
         } catch (IOException e) {
             e.printStackTrace();
             // Default value or handle exception accordingly
         }
     }
-    public void upload(byte[] bytes ,
-                       String nameMusic, com.zeroc.Ice.Current current) {
+
+    public void upload(byte[] bytes, String nameMusic, com.zeroc.Ice.Current current) {
         try {
             System.out.println("uploading music new flow ... : " + nameMusic);
-            //System.out.println("uploading music...");
-            byte[] musicBytes = bytes;
-            //System.out.println(musicBytes.length + " bytes");
-            Path path = Paths.get(destination);
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-            if(!destination.endsWith(".mp3"))
-                destination += nameMusic;
-            Path pathMusic = Paths.get(destination);
-            //si le fichier existe, on continue à ecrire dessus
-            Files.write(pathMusic, musicBytes, StandardOpenOption.CREATE,
-                    StandardOpenOption.APPEND);
-            System.out.println("flow uploaded ");
+            Path destinationPath = Paths.get(destination, nameMusic);
+            Files.write(destinationPath, bytes, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            System.out.println("Flow uploaded");
         } catch (IOException e) {
             e.printStackTrace();
         }
