@@ -17,7 +17,7 @@ async function traiterChanson(nomChanson) {
             console.log("Je récupère SpotifyManager");
             console.log("Uploading...");
             const buffer = Buffer.from(fileData);
-            const chunkSize = 1024;
+            const chunkSize = 20480;
             const startTime = Date.now();
             for (let i = 0; i < buffer.length; i += chunkSize) {
                 const sequence = buffer.slice(i, i + chunkSize);
