@@ -22,7 +22,7 @@ async function readMusic() {
             let continueStreaming = true;
             while (continueStreaming) {
                 const result = await SpotifyManager.lireLaMusique("ayen", "kabyle");
-                console.log("result: ", result);
+                //console.log("result: ", result);
 
                 if (result && result.length > 0) {
                     // Écrire le flux audio dans le haut-parleur

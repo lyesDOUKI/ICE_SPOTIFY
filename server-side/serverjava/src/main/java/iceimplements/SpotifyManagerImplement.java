@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Properties;
-
+import java.io.ByteArrayOutputStream;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
@@ -103,11 +103,12 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         Path path = Paths.get(fullPath);
         try {
             FileInputStream fileInputStream = new FileInputStream(path.toFile());
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             byte[] buffer = new byte[4096];
             int bytesRead;
             // Envoyer le flux audio au client via ICE
             while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                return buffer;
+                outputStream.write(buffer, 0, bytesRead);
             }
 
             // Fermer le lecteur audio après la fin du flux audio
