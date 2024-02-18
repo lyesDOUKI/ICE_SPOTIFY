@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.Properties;
 
+
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.advanced.AdvancedPlayer;
 public class SpotifyManagerImplement implements Spotify.SpotifyManager {
 
     private static final String CONFIG_FILE = "config.properties";
@@ -95,19 +98,20 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
 
     @Override
     public byte[] lireLaMusique(String musicName, String musicStyle, Current current) {
-        Path path = Paths.get(destination + musicStyle, musicName, ".mp3");
+        String fullPath = destination + "/" + musicStyle + "/" + musicName + ".mp3";
+        Path path = Paths.get(fullPath);
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(path.toFile());
+            AdvancedPlayer player = new AdvancedPlayer(new FileInputStream(path.toFile()));
             byte[] buffer = new byte[4096];
             int bytesRead;
 
             // Envoyer le flux audio au client via ICE
-            while ((bytesRead = audioInputStream.read(buffer)) != -1) {
+            while ((bytesRead = player.read(buffer)) != -1) {
                 return buffer;
             }
 
             // Fermer le lecteur audio après la fin du flux audio
-            audioInputStream.close();
+            player.close();
             return null;
         } catch (Exception e) {
             e.printStackTrace();

@@ -8,6 +8,7 @@ project(':Spotify') {
     dependencies {
         implementation 'com.zeroc:ice:3.7.2'
         implementation 'uk.co.caprica:vlcj:4.4.4'
+        implementation 'javazoom:jlayer:1.0.1'
 
     }
 
@@ -30,6 +31,7 @@ project(':serverjava') {
     dependencies {
         implementation 'com.zeroc:ice:3.7.2'
         implementation 'uk.co.caprica:vlcj:4.4.4'
+        implementation 'javazoom:jlayer:1.0.1'
         implementation project(':Spotify')
     }
     compileJava {
