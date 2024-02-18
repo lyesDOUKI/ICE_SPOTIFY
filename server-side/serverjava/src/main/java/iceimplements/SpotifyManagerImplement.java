@@ -4,6 +4,7 @@ import com.zeroc.Ice.Current;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Properties;
@@ -101,17 +102,16 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         String fullPath = destination + "/" + musicStyle + "/" + musicName + ".mp3";
         Path path = Paths.get(fullPath);
         try {
-            AdvancedPlayer player = new AdvancedPlayer(new FileInputStream(path.toFile()));
+            FileInputStream fileInputStream = new FileInputStream(path.toFile());
             byte[] buffer = new byte[4096];
             int bytesRead;
-
             // Envoyer le flux audio au client via ICE
-            while ((bytesRead = player.read(buffer)) != -1) {
+            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
                 return buffer;
             }
 
             // Fermer le lecteur audio après la fin du flux audio
-            player.close();
+            fileInputStream.close();
             return null;
         } catch (Exception e) {
             e.printStackTrace();
