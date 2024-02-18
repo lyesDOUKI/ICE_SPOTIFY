@@ -109,6 +109,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
             // Envoyer le flux audio au client via ICE
             while ((bytesRead = fileInputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
+                return outputStream.toByteArray();
             }
 
             // Fermer le lecteur audio après la fin du flux audio
