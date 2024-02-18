@@ -17,7 +17,15 @@ package Spotify;
 
 public interface SpotifyManager extends com.zeroc.Ice.Object
 {
-    void upload(byte[] bytes, String nameMusic, com.zeroc.Ice.Current current);
+    void upload(byte[] bytes, String nameMusic, String styleMusic, com.zeroc.Ice.Current current);
+
+    void deleteMusic(String nameMusic, String styleMusic, com.zeroc.Ice.Current current);
+
+    void update(String nameMusic, String newNameMusic, String styleMusic, com.zeroc.Ice.Current current);
+
+    String[] getMusicByStyle(String styleMusic, com.zeroc.Ice.Current current);
+
+    byte[] lireLaMusique(String musicName, String musicStyle, com.zeroc.Ice.Current current);
 
     /** @hidden */
     static final String[] _iceIds =
@@ -56,20 +64,112 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
         com.zeroc.Ice.InputStream istr = inS.startReadParams();
         byte[] iceP_bytes;
         String iceP_nameMusic;
+        String iceP_styleMusic;
         iceP_bytes = istr.readByteSeq();
         iceP_nameMusic = istr.readString();
+        iceP_styleMusic = istr.readString();
         inS.endReadParams();
-        obj.upload(iceP_bytes, iceP_nameMusic, current);
+        obj.upload(iceP_bytes, iceP_nameMusic, iceP_styleMusic, current);
         return inS.setResult(inS.writeEmptyParams());
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_deleteMusic(SpotifyManager obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_nameMusic;
+        String iceP_styleMusic;
+        iceP_nameMusic = istr.readString();
+        iceP_styleMusic = istr.readString();
+        inS.endReadParams();
+        obj.deleteMusic(iceP_nameMusic, iceP_styleMusic, current);
+        return inS.setResult(inS.writeEmptyParams());
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_update(SpotifyManager obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_nameMusic;
+        String iceP_newNameMusic;
+        String iceP_styleMusic;
+        iceP_nameMusic = istr.readString();
+        iceP_newNameMusic = istr.readString();
+        iceP_styleMusic = istr.readString();
+        inS.endReadParams();
+        obj.update(iceP_nameMusic, iceP_newNameMusic, iceP_styleMusic, current);
+        return inS.setResult(inS.writeEmptyParams());
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_getMusicByStyle(SpotifyManager obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_styleMusic;
+        iceP_styleMusic = istr.readString();
+        inS.endReadParams();
+        String[] ret = obj.getMusicByStyle(iceP_styleMusic, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        ostr.writeStringSeq(ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_lireLaMusique(SpotifyManager obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_musicName;
+        String iceP_musicStyle;
+        iceP_musicName = istr.readString();
+        iceP_musicStyle = istr.readString();
+        inS.endReadParams();
+        byte[] ret = obj.lireLaMusique(iceP_musicName, iceP_musicStyle, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        ostr.writeByteSeq(ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
     }
 
     /** @hidden */
     final static String[] _iceOps =
     {
+        "deleteMusic",
+        "getMusicByStyle",
         "ice_id",
         "ice_ids",
         "ice_isA",
         "ice_ping",
+        "lireLaMusique",
+        "update",
         "upload"
     };
 
@@ -88,21 +188,37 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
         {
             case 0:
             {
-                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
+                return _iceD_deleteMusic(this, in, current);
             }
             case 1:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
+                return _iceD_getMusicByStyle(this, in, current);
             }
             case 2:
             {
-                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
             }
             case 3:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
             }
             case 4:
+            {
+                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+            }
+            case 5:
+            {
+                return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
+            }
+            case 6:
+            {
+                return _iceD_lireLaMusique(this, in, current);
+            }
+            case 7:
+            {
+                return _iceD_update(this, in, current);
+            }
+            case 8:
             {
                 return _iceD_upload(this, in, current);
             }

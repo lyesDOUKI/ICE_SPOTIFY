@@ -17,41 +17,203 @@ package Spotify;
 
 public interface SpotifyManagerPrx extends com.zeroc.Ice.ObjectPrx
 {
-    default void upload(byte[] bytes, String nameMusic)
+    default void upload(byte[] bytes, String nameMusic, String styleMusic)
     {
-        upload(bytes, nameMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+        upload(bytes, nameMusic, styleMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext);
     }
 
-    default void upload(byte[] bytes, String nameMusic, java.util.Map<String, String> context)
+    default void upload(byte[] bytes, String nameMusic, String styleMusic, java.util.Map<String, String> context)
     {
-        _iceI_uploadAsync(bytes, nameMusic, context, true).waitForResponse();
+        _iceI_uploadAsync(bytes, nameMusic, styleMusic, context, true).waitForResponse();
     }
 
-    default java.util.concurrent.CompletableFuture<Void> uploadAsync(byte[] bytes, String nameMusic)
+    default java.util.concurrent.CompletableFuture<Void> uploadAsync(byte[] bytes, String nameMusic, String styleMusic)
     {
-        return _iceI_uploadAsync(bytes, nameMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+        return _iceI_uploadAsync(bytes, nameMusic, styleMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
     }
 
-    default java.util.concurrent.CompletableFuture<Void> uploadAsync(byte[] bytes, String nameMusic, java.util.Map<String, String> context)
+    default java.util.concurrent.CompletableFuture<Void> uploadAsync(byte[] bytes, String nameMusic, String styleMusic, java.util.Map<String, String> context)
     {
-        return _iceI_uploadAsync(bytes, nameMusic, context, false);
+        return _iceI_uploadAsync(bytes, nameMusic, styleMusic, context, false);
     }
 
     /**
      * @hidden
      * @param iceP_bytes -
      * @param iceP_nameMusic -
+     * @param iceP_styleMusic -
      * @param context -
      * @param sync -
      * @return -
      **/
-    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_uploadAsync(byte[] iceP_bytes, String iceP_nameMusic, java.util.Map<String, String> context, boolean sync)
+    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_uploadAsync(byte[] iceP_bytes, String iceP_nameMusic, String iceP_styleMusic, java.util.Map<String, String> context, boolean sync)
     {
         com.zeroc.IceInternal.OutgoingAsync<Void> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "upload", null, sync, null);
         f.invoke(false, context, null, ostr -> {
                      ostr.writeByteSeq(iceP_bytes);
                      ostr.writeString(iceP_nameMusic);
+                     ostr.writeString(iceP_styleMusic);
                  }, null);
+        return f;
+    }
+
+    default void deleteMusic(String nameMusic, String styleMusic)
+    {
+        deleteMusic(nameMusic, styleMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default void deleteMusic(String nameMusic, String styleMusic, java.util.Map<String, String> context)
+    {
+        _iceI_deleteMusicAsync(nameMusic, styleMusic, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<Void> deleteMusicAsync(String nameMusic, String styleMusic)
+    {
+        return _iceI_deleteMusicAsync(nameMusic, styleMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<Void> deleteMusicAsync(String nameMusic, String styleMusic, java.util.Map<String, String> context)
+    {
+        return _iceI_deleteMusicAsync(nameMusic, styleMusic, context, false);
+    }
+
+    /**
+     * @hidden
+     * @param iceP_nameMusic -
+     * @param iceP_styleMusic -
+     * @param context -
+     * @param sync -
+     * @return -
+     **/
+    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_deleteMusicAsync(String iceP_nameMusic, String iceP_styleMusic, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<Void> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "deleteMusic", null, sync, null);
+        f.invoke(false, context, null, ostr -> {
+                     ostr.writeString(iceP_nameMusic);
+                     ostr.writeString(iceP_styleMusic);
+                 }, null);
+        return f;
+    }
+
+    default void update(String nameMusic, String newNameMusic, String styleMusic)
+    {
+        update(nameMusic, newNameMusic, styleMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default void update(String nameMusic, String newNameMusic, String styleMusic, java.util.Map<String, String> context)
+    {
+        _iceI_updateAsync(nameMusic, newNameMusic, styleMusic, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<Void> updateAsync(String nameMusic, String newNameMusic, String styleMusic)
+    {
+        return _iceI_updateAsync(nameMusic, newNameMusic, styleMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<Void> updateAsync(String nameMusic, String newNameMusic, String styleMusic, java.util.Map<String, String> context)
+    {
+        return _iceI_updateAsync(nameMusic, newNameMusic, styleMusic, context, false);
+    }
+
+    /**
+     * @hidden
+     * @param iceP_nameMusic -
+     * @param iceP_newNameMusic -
+     * @param iceP_styleMusic -
+     * @param context -
+     * @param sync -
+     * @return -
+     **/
+    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_updateAsync(String iceP_nameMusic, String iceP_newNameMusic, String iceP_styleMusic, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<Void> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "update", null, sync, null);
+        f.invoke(false, context, null, ostr -> {
+                     ostr.writeString(iceP_nameMusic);
+                     ostr.writeString(iceP_newNameMusic);
+                     ostr.writeString(iceP_styleMusic);
+                 }, null);
+        return f;
+    }
+
+    default String[] getMusicByStyle(String styleMusic)
+    {
+        return getMusicByStyle(styleMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default String[] getMusicByStyle(String styleMusic, java.util.Map<String, String> context)
+    {
+        return _iceI_getMusicByStyleAsync(styleMusic, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<String[]> getMusicByStyleAsync(String styleMusic)
+    {
+        return _iceI_getMusicByStyleAsync(styleMusic, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<String[]> getMusicByStyleAsync(String styleMusic, java.util.Map<String, String> context)
+    {
+        return _iceI_getMusicByStyleAsync(styleMusic, context, false);
+    }
+
+    /**
+     * @hidden
+     * @param iceP_styleMusic -
+     * @param context -
+     * @param sync -
+     * @return -
+     **/
+    default com.zeroc.IceInternal.OutgoingAsync<String[]> _iceI_getMusicByStyleAsync(String iceP_styleMusic, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<String[]> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "getMusicByStyle", null, sync, null);
+        f.invoke(true, context, null, ostr -> {
+                     ostr.writeString(iceP_styleMusic);
+                 }, istr -> {
+                     String[] ret;
+                     ret = istr.readStringSeq();
+                     return ret;
+                 });
+        return f;
+    }
+
+    default byte[] lireLaMusique(String musicName, String musicStyle)
+    {
+        return lireLaMusique(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default byte[] lireLaMusique(String musicName, String musicStyle, java.util.Map<String, String> context)
+    {
+        return _iceI_lireLaMusiqueAsync(musicName, musicStyle, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<byte[]> lireLaMusiqueAsync(String musicName, String musicStyle)
+    {
+        return _iceI_lireLaMusiqueAsync(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<byte[]> lireLaMusiqueAsync(String musicName, String musicStyle, java.util.Map<String, String> context)
+    {
+        return _iceI_lireLaMusiqueAsync(musicName, musicStyle, context, false);
+    }
+
+    /**
+     * @hidden
+     * @param iceP_musicName -
+     * @param iceP_musicStyle -
+     * @param context -
+     * @param sync -
+     * @return -
+     **/
+    default com.zeroc.IceInternal.OutgoingAsync<byte[]> _iceI_lireLaMusiqueAsync(String iceP_musicName, String iceP_musicStyle, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<byte[]> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "lireLaMusique", null, sync, null);
+        f.invoke(true, context, null, ostr -> {
+                     ostr.writeString(iceP_musicName);
+                     ostr.writeString(iceP_musicStyle);
+                 }, istr -> {
+                     byte[] ret;
+                     ret = istr.readByteSeq();
+                     return ret;
+                 });
         return f;
     }
 

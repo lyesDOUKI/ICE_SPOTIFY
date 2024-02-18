@@ -1,0 +1,25 @@
+<div class="container">
+  <h4>Récupérer les musiques selon le style</h4>
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" id="rapCheckbox" value="rap" (change)="toggleStyle($event, 'rap')">
+    <label class="form-check-label" for="rapCheckbox">
+      Rap
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" id="kabyleCheckbox" value="kabyle" (change)="toggleStyle($event, 'kabyle')">
+    <label class="form-check-label" for="kabyleCheckbox">
+      Kabyle
+    </label>
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" id="rockCheckbox" value="rock" (change)="toggleStyle($event, 'rock')">
+    <label class="form-check-label" for="rockCheckbox">
+      Rock
+    </label>
+  </div>
+  <button *ngIf="!isLoading" type="button" class="btn btn-primary" (click)="searchMusic()">Chercher</button>
+  <div *ngIf="isLoading" class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>

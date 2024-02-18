@@ -1,0 +1,31 @@
+<div class="container">
+  <!-- Upload Music Component en haut -->
+  <div class="row mt-4">
+    <div class="col-md-6 offset-md-3">
+      <div class="d-flex justify-content-center">
+        <app-upload-music></app-upload-music>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deuxième rangée pour les autres composants -->
+  <div class="row mt-4">
+    <!-- Composant de recherche à gauche -->
+    <div class="col-md-6">
+      <div class="d-flex justify-content-center">
+        <app-music-by-style></app-music-by-style>
+      </div>
+    </div>
+
+    <!-- Composant d'affichage à droite -->
+    <div class="col-md-6">
+      <div class="d-flex justify-content-center">
+        <div>
+          <app-display-musics *ngIf="showDisplayMusics"
+           [musicList]="musicList"
+          [styleMusic]="styleMusic"></app-display-musics>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h4 class="text-center mb-4" id="uploadTitle">Télécharger un fichier MP3</h4>
+      <form id="uploadForm" (ngSubmit)="submitForm()" enctype="multipart/form-data">
+        <div class="input-group mb-3">
+          <label class="input-group-text" for="mp3file">Télécharger</label>
+          <input type="file" class="form-control" id="mp3file" name="mp3file" accept=".mp3" (change)="updateFileName($event)">
+        </div>
+        <div class="form-group">
+          <label for="musicStyle">Style de musique :</label>
+          <select class="form-control" id="musicStyle" name="musicStyle" [(ngModel)]="selectedStyle">
+            <option value="rap">Rap</option>
+            <option value="rock">Rock</option>
+            <option value="kabyle">Kabyle</option>
+          </select>
+        </div>
+        <div id="fileNameMessage" class="mb-3"></div>
+        <!-- Bouton pour soumettre le formulaire -->
+        <div class="text-center"> <!-- Centrage du bouton -->
+          <button *ngIf="!isLoading" type="button" class="btn btn-primary" (click)="submitForm()">Upload</button>
+          <div *ngIf="isLoading" class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

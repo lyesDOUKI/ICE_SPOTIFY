@@ -1,0 +1,27 @@
+<div class="container">
+  <h2>Liste des musiques</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nom de la musique</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let music of musicList">
+        <td class="text-truncate" style="max-width: 150px;">{{ music }}</td>
+        <td>
+          <button class="btn btn-danger me-2" (click)="deleteMusic(music)">Supprimer</button>
+          <button class="btn btn-primary" (click)="editMusic(music)">Modifier</button>
+          <div *ngIf="music === editingMusic">
+            <input type="text" class="form-control" [(ngModel)]="newMusicName">
+            <button *ngIf="!isLoading" type="button" class="btn btn-success" (click)="updateMusicName()">Chercher</button>
+  <div *ngIf="isLoading" class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

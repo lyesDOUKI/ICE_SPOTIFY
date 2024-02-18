@@ -26,6 +26,8 @@
 
     Slice.defineSequence(Spotify, "dataHelper", "Ice.ByteHelper", true);
 
+    Slice.defineSequence(Spotify, "listOfMusicByStyleHelper", "Ice.StringHelper", false);
+
     const iceC_Spotify_SpotifyManager_ids = [
         "::Ice::Object",
         "::Spotify::SpotifyManager"
@@ -41,7 +43,11 @@
 
     Slice.defineOperations(Spotify.SpotifyManager, Spotify.SpotifyManagerPrx, iceC_Spotify_SpotifyManager_ids, 1,
     {
-        "upload": [, , , , , [["Spotify.dataHelper"], [7]], , , , ]
+        "upload": [, , , , , [["Spotify.dataHelper"], [7], [7]], , , , ],
+        "deleteMusic": [, , , , , [[7], [7]], , , , ],
+        "update": [, , , , , [[7], [7], [7]], , , , ],
+        "getMusicByStyle": [, , , , ["Spotify.listOfMusicByStyleHelper"], [[7]], , , , ],
+        "lireLaMusique": [, , , , ["Spotify.dataHelper"], [[7], [7]], , , , ]
     });
     exports.Spotify = Spotify;
 }
