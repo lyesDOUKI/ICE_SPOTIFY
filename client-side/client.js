@@ -1,17 +1,30 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const http = require('http')
 const traiterChanson = require('./ice/ice-upload');
 const loadMusicsByStyle = require('./ice/ice-loadMusics');
 const updateMusic = require('./ice/ice-updateMusic');
 const deleteMusic = require('./ice/ice-deleteMusic');
 const readMusic = require('./ice/ice-readMusic');
+const { Server } = require("socket.io");
+const cors = require('cors');
 const app = express();
 const PORT = 3000;
-
+const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:4200",
+      methods: ["GET", "POST"],
+      allowedHeaders: ["Content-Type", "Authorization"]
+    }
+  });
+io.on('connection', (socket) => {
+    console.log('Un client s\'est connecté');
+});
 // Configurer le stockage pour les fichiers MP3
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -90,8 +103,12 @@ app.delete('/music/:music/:style', (req, res) => {
     }
 });
 app.get('/ecouter', (req, res) => {
-    readMusic();
+    readMusic(io);
 });
-app.listen(PORT, () => {
+io.on('connection', (socket) => {
+    console.log('Un client s\'est connecté');
+});
+
+server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

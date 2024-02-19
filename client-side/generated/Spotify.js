@@ -47,7 +47,7 @@
         "deleteMusic": [, , , , , [[7], [7]], , , , ],
         "update": [, , , , , [[7], [7], [7]], , , , ],
         "getMusicByStyle": [, , , , ["Spotify.listOfMusicByStyleHelper"], [[7]], , , , ],
-        "lireLaMusique": [, , , , ["Spotify.dataHelper"], [[7], [7]], , , , ]
+        "lireLaMusique": [, , , , [7], [[7], [7]], , , , ]
     });
     exports.Spotify = Spotify;
 }

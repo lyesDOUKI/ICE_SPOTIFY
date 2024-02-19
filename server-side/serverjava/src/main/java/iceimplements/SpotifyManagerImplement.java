@@ -6,12 +6,20 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.*;
 import java.util.Properties;
 import java.io.ByteArrayOutputStream;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
+
 public class SpotifyManagerImplement implements Spotify.SpotifyManager {
 
     private static final String CONFIG_FILE = "config.properties";
@@ -98,26 +106,44 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     }
 
     @Override
-    public byte[] lireLaMusique(String musicName, String musicStyle, Current current) {
-        String fullPath = destination + "/" + musicStyle + "/" + musicName + ".mp3";
-        Path path = Paths.get(fullPath);
-        try {
-            FileInputStream fileInputStream = new FileInputStream(path.toFile());
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            // Envoyer le flux audio au client via ICE
-            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-                return outputStream.toByteArray();
-            }
+    public String lireLaMusique(String musicName, String musicStyle, Current current) {
+        new NativeDiscovery().discover();
 
-            // Fermer le lecteur audio après la fin du flux audio
-            fileInputStream.close();
-            return null;
+        String fullPath = destination + musicStyle + "\\" + musicName + ".mp3";
+        Path path = Paths.get(fullPath);
+        MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
+        MediaPlayer mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+        try {
+            int port = findAvailablePort();
+            String streamUrl = "udp://@127.0.0.1:" + port;
+            // Adresse de diffusion multicast
+            String[] options = {
+                    ":sout=#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:duplicate{dst=std{access=udp,mux=ts,dst=" + streamUrl + "}}"
+            };
+            /*String url = "/" + musicName + ".mp3";
+            String streamStr = "#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:http{dst=:" + port + url + "}";*/
+            mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+                @Override
+                public void playing(MediaPlayer mediaPlayer) {
+                    System.out.println("Lien d'écoute : " + streamUrl);
+                }
+            });
+            //mediaPlayer.audio().setVolume(0);
+            mediaPlayer.media().start(fullPath, options);
+
+            return streamUrl;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+    private int findAvailablePort() {
+        // Créer un socket IPv4 pour un protocole de type TCP
+        try (java.net.ServerSocket socket = new java.net.ServerSocket(0)) {
+            // Retourner le numéro de port attribué
+            return socket.getLocalPort();
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Erreur lors de la recherche d'un port disponible", e);
+        }
     }
 }

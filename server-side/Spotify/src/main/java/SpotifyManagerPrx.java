@@ -175,22 +175,22 @@ public interface SpotifyManagerPrx extends com.zeroc.Ice.ObjectPrx
         return f;
     }
 
-    default byte[] lireLaMusique(String musicName, String musicStyle)
+    default String lireLaMusique(String musicName, String musicStyle)
     {
         return lireLaMusique(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext);
     }
 
-    default byte[] lireLaMusique(String musicName, String musicStyle, java.util.Map<String, String> context)
+    default String lireLaMusique(String musicName, String musicStyle, java.util.Map<String, String> context)
     {
         return _iceI_lireLaMusiqueAsync(musicName, musicStyle, context, true).waitForResponse();
     }
 
-    default java.util.concurrent.CompletableFuture<byte[]> lireLaMusiqueAsync(String musicName, String musicStyle)
+    default java.util.concurrent.CompletableFuture<java.lang.String> lireLaMusiqueAsync(String musicName, String musicStyle)
     {
         return _iceI_lireLaMusiqueAsync(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
     }
 
-    default java.util.concurrent.CompletableFuture<byte[]> lireLaMusiqueAsync(String musicName, String musicStyle, java.util.Map<String, String> context)
+    default java.util.concurrent.CompletableFuture<java.lang.String> lireLaMusiqueAsync(String musicName, String musicStyle, java.util.Map<String, String> context)
     {
         return _iceI_lireLaMusiqueAsync(musicName, musicStyle, context, false);
     }
@@ -203,15 +203,15 @@ public interface SpotifyManagerPrx extends com.zeroc.Ice.ObjectPrx
      * @param sync -
      * @return -
      **/
-    default com.zeroc.IceInternal.OutgoingAsync<byte[]> _iceI_lireLaMusiqueAsync(String iceP_musicName, String iceP_musicStyle, java.util.Map<String, String> context, boolean sync)
+    default com.zeroc.IceInternal.OutgoingAsync<java.lang.String> _iceI_lireLaMusiqueAsync(String iceP_musicName, String iceP_musicStyle, java.util.Map<String, String> context, boolean sync)
     {
-        com.zeroc.IceInternal.OutgoingAsync<byte[]> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "lireLaMusique", null, sync, null);
+        com.zeroc.IceInternal.OutgoingAsync<java.lang.String> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "lireLaMusique", null, sync, null);
         f.invoke(true, context, null, ostr -> {
                      ostr.writeString(iceP_musicName);
                      ostr.writeString(iceP_musicStyle);
                  }, istr -> {
-                     byte[] ret;
-                     ret = istr.readByteSeq();
+                     String ret;
+                     ret = istr.readString();
                      return ret;
                  });
         return f;
