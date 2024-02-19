@@ -64,5 +64,19 @@ export class DisplayMusicsComponent {
     this.editingMusic = ''; // Réinitialise la musique en cours d'édition
     this.newMusicName = ''; // Réinitialise le nouveau nom de musique
   }
-
+  audioUrl : string = ''; // URL de la musique à lire
+  selectedMusicIndex: number | null = null;
+  listenToMusic(music:any, index: number)
+  {
+    this.selectedMusicIndex = index;
+    this.spotifyService.lireMusic(music, this.styleMusic).subscribe((data) => {
+      this.audioUrl = data;
+      const audioPlayer = document.getElementById('audioPlayer') as HTMLAudioElement;
+      if (audioPlayer) {
+        audioPlayer.src = this.audioUrl;
+        audioPlayer.load();
+        audioPlayer.play();
+      }
+    });
+  }
 }

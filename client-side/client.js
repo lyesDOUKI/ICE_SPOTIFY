@@ -102,8 +102,12 @@ app.delete('/music/:music/:style', (req, res) => {
         res.status(500).json({ error: "Erreur lors de la suppression", status : 500 }); // Renvoyer une réponse JSON
     }
 });
-app.get('/ecouter', (req, res) => {
-    readMusic(io);
+app.get('/ecouter/:music/:style', async (req, res) => {
+    const musicName = req.params.music;
+    const musicStyle = req.params.style;
+    const url = await readMusic(musicName, musicStyle);
+    res.set('Content-Type', 'audio/mpeg');
+    return res.status(200).json(url);
 });
 io.on('connection', (socket) => {
     console.log('Un client s\'est connecté');

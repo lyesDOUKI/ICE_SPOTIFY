@@ -22,4 +22,7 @@ export class SpotifyCommService {
   deleteMusic(music: string, style: string) {
     return this.http.delete<any>(this.baseUrl+"/music/"+music+"/"+style);
   }
+  lireMusic(music: string, style: string) {
+    return this.http.get<any>(this.baseUrl+"/ecouter/"+music+"/"+style);
+  }
 }

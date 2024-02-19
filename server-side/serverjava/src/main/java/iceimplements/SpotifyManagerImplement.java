@@ -25,9 +25,13 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     private static final String CONFIG_FILE = "config.properties";
     private static final String DESTINATION_PROPERTY = "destination.directory";
     private String destination = "";
+    MediaPlayerFactory mediaPlayerFactory;
+    MediaPlayer mediaPlayer;
 
     public SpotifyManagerImplement() {
         loadConfiguration();
+        this.mediaPlayerFactory = new MediaPlayerFactory();
+        this.mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
     }
 
     private void loadConfiguration() {
@@ -108,30 +112,34 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     @Override
     public String lireLaMusique(String musicName, String musicStyle, Current current) {
         new NativeDiscovery().discover();
-
-        String fullPath = destination + musicStyle + "\\" + musicName + ".mp3";
+        String cleanMusicName = musicName.endsWith(".mp3") ?
+                musicName.substring(0, musicName.length() - 4) : musicName;
+        String fullPath = destination + musicStyle + "\\" + cleanMusicName + ".mp3";
         Path path = Paths.get(fullPath);
-        MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
-        MediaPlayer mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+        //verifier si media player est en cours de lecture
+        if (mediaPlayer.status().isPlaying()) {
+            System.out.println("Arrêt de la lecture en cours ...");
+            mediaPlayer.controls().stop();
+            mediaPlayer.release();
+            System.out.println("Lecture arrêtée avec succès !");
+            mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+        }
         try {
             int port = findAvailablePort();
-            String streamUrl = "udp://@127.0.0.1:" + port;
-            // Adresse de diffusion multicast
-            String[] options = {
-                    ":sout=#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:duplicate{dst=std{access=udp,mux=ts,dst=" + streamUrl + "}}"
-            };
+            String streamUrl = "127.0.0.1:" + port; // Adresse de diffusion multicast
+            String options =
+                    ":sout=#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:duplicate{dst=std{access=http,mux=mp3,dst=" + streamUrl + "}}";
             /*String url = "/" + musicName + ".mp3";
             String streamStr = "#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:http{dst=:" + port + url + "}";*/
             mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
                 @Override
                 public void playing(MediaPlayer mediaPlayer) {
-                    System.out.println("Lien d'écoute : " + streamUrl);
+                    System.out.println("Lien d'écoute : http://" + streamUrl);
                 }
             });
             //mediaPlayer.audio().setVolume(0);
-            mediaPlayer.media().start(fullPath, options);
-
-            return streamUrl;
+            mediaPlayer.media().play(fullPath, (String) options, ":no-sout-rtp-sap", ":no-sout-standard-sap", ":sout-all", ":sout-keep");
+            return "http://" + streamUrl;
         } catch (Exception e) {
             e.printStackTrace();
         }

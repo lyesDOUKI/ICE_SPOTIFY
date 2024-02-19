@@ -12,7 +12,6 @@ import { UpdateMusicComponent } from './update-music/update-music.component';
 import { MusicByStyleComponent } from './music-by-style/music-by-style.component';
 import { DisplayMusicsComponent } from './display-musics/display-musics.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,

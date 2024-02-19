@@ -1,7 +1,7 @@
 const Ice = require("ice").Ice;
 const Spotify = require("../generated/Spotify").Spotify;
 
-async function readMusic(io) {
+async function readMusic(musicName, musicStyle) {
     let communicator;
     try {
         communicator = Ice.initialize();
@@ -9,8 +9,9 @@ async function readMusic(io) {
         const SpotifyManager = await Spotify.SpotifyManagerPrx.checkedCast(base);
         if (SpotifyManager) {
             console.log("Je récupère SpotifyManager");
-            const music = await SpotifyManager.lireLaMusique("ameslub", "kabyle");
+            const music = await SpotifyManager.lireLaMusique(musicName, musicStyle);
             console.log(music);
+            return music;
         } else {
             console.log("Proxy invalide");
         }

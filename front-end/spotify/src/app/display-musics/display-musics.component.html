@@ -3,23 +3,31 @@
   <table class="table">
     <thead>
       <tr>
+        <th></th> <!-- Colonne vide ajoutée -->
         <th>Nom de la musique</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let music of musicList">
+      <tr *ngFor="let music of musicList; let i = index">
+        <td></td> <!-- Colonne vide ajoutée -->
         <td class="text-truncate" style="max-width: 150px;">{{ music }}</td>
         <td>
           <button class="btn btn-danger me-2" (click)="deleteMusic(music)">Supprimer</button>
-          <button class="btn btn-primary" (click)="editMusic(music)">Modifier</button>
+          <button class="btn btn-primary me-2" (click)="editMusic(music)">Modifier</button>
+          <button class="btn btn-success" (click)="listenToMusic(music, i)">Écouter</button>
           <div *ngIf="music === editingMusic">
             <input type="text" class="form-control" [(ngModel)]="newMusicName">
             <button *ngIf="!isLoading" type="button" class="btn btn-success" (click)="updateMusicName()">Chercher</button>
-  <div *ngIf="isLoading" class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Loading...</span>
-  </div>
+            <div *ngIf="isLoading" class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
           </div>
+          <audio controls id="audioPlayer"
+          class="audio-player" *ngIf="selectedMusicIndex === i && audioUrl">
+            <source [src]="audioUrl" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
         </td>
       </tr>
     </tbody>
