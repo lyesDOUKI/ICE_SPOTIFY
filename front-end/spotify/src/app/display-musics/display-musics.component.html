@@ -47,8 +47,9 @@
   </div>
   <div class="volume-container">
     <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volumeList[i]" (input)="setVolume(i)"
-    [disabled]="selectedMusicIndex !== i"  class="volume-bar" >
+    [disabled]="selectedMusicIndex !== i || currentPlayingMusic !== music"  class="volume-bar" >
   </div>
+
   <!-- Intégration de l'élément audio -->
   <div class="audio-container" #audioContainer>
   </div>

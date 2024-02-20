@@ -38,6 +38,7 @@ export class UploadMusicComponent {
     this.spotifyService.uploadMusic(formData).subscribe(
       (response) => {
         if(response.status === 200) {
+          this.deleteUploadedFile(); // Supprimer le fichier uploadé
           this.isLoading = false; // Cacher le spinner
           this.notificationService.showNotification('La chanson a été envoyée avec succès', 'success');
         }else {
