@@ -1,29 +1,24 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <h4 class="text-center mb-4" id="uploadTitle">Télécharger un fichier MP3</h4>
-      <form id="uploadForm" (ngSubmit)="submitForm()" enctype="multipart/form-data">
-        <div class="input-group mb-3">
-          <label class="input-group-text" for="mp3file">Télécharger</label>
-          <input type="file" class="form-control" id="mp3file" name="mp3file" accept=".mp3" (change)="updateFileName($event)">
-        </div>
-        <div class="form-group">
-          <label for="musicStyle">Style de musique :</label>
-          <select class="form-control" id="musicStyle" name="musicStyle" [(ngModel)]="selectedStyle">
-            <option value="rap">Rap</option>
-            <option value="rock">Rock</option>
-            <option value="kabyle">Kabyle</option>
-          </select>
-        </div>
-        <div id="fileNameMessage" class="mb-3"></div>
-        <!-- Bouton pour soumettre le formulaire -->
-        <div class="text-center"> <!-- Centrage du bouton -->
-          <button *ngIf="!isLoading" type="button" class="btn btn-primary" (click)="submitForm()">Upload</button>
-          <div *ngIf="isLoading" class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      </form>
-    </div>
+<div class="container upload-section">
+  <label for="mp3file" class="file-label">Uploadez votre chanson</label>
+  <input type="file" id="mp3file" class="file-input" (change)="updateFileName($event)">
+  <div *ngIf="uploadedFileName" class="mt-3 file-upload-message">
+    Le fichier {{ uploadedFileName }} a bien été ajouté.
+    <span class="delete-icon" (click)="deleteUploadedFile()">&times;</span>
   </div>
+  <div class="mt-3">
+    <select class="genre-select" id="musicStyle" name="musicStyle" [(ngModel)]="selectedStyle">
+      <option value="" disabled selected>Choisissez le style</option>
+      <option value="kabyle">Kabyle</option>
+      <option value="rock">Rock</option>
+      <option value="rap">Rap</option>
+      <option value="Autres">Autres</option>
+    </select>
+  </div>
+
+  <button class="upload-btn mt-3" type="button" (click)="submitForm()" [disabled]="isLoading">
+    <span *ngIf="!isLoading">Valider</span>
+    <div *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </button>
 </div>

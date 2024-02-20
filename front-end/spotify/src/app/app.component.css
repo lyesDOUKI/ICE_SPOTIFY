@@ -1,0 +1,7 @@
+.music-list {
+  width: 600px; /* Augmentation de la largeur pour mieux s'adapter */
+  background-color: rgba(255, 255, 255, 0.8); /* Fond légèrement transparent */
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}

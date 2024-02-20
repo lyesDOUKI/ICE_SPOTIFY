@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { UpdateMusicComponent } from '../update-music/update-music.component';
 import { SpotifyCommService } from '../services/spotify-comm.service';
 import { NotificationService } from '../services/notifications.service';
@@ -11,6 +11,7 @@ import { NotificationService } from '../services/notifications.service';
   styleUrls: ['./display-musics.component.css']
 })
 export class DisplayMusicsComponent {
+  currentPlayingMusic: string | null = null;
   @Input() musicList: string[] = []; // Liste des musiques à afficher
   @Input() styleMusic = ''; // Style de musique à afficher
   isLoading: boolean = false;
@@ -66,17 +67,61 @@ export class DisplayMusicsComponent {
   }
   audioUrl : string = ''; // URL de la musique à lire
   selectedMusicIndex: number | null = null;
-  listenToMusic(music:any, index: number)
-  {
+  currentTime = '0:00';
+  @ViewChild('audioContainer') audioContainer!: ElementRef;
+  audioPlayer!: HTMLAudioElement;
+  listenToMusic(music: string, index: number) {
+    this.isLoading = true;
     this.selectedMusicIndex = index;
+    this.audioPlayer = new Audio();
+    this.audioPlayer.addEventListener('loadedmetadata', () => {
+      // Mettre à jour le temps total de la musique
+      const totalTime = this.formatTime(this.audioPlayer.duration);
+    });
+    this.audioPlayer.addEventListener('timeupdate', () => {
+      // Mettre à jour le temps écoulé de la musique
+      this.currentTime = this.formatTime(this.audioPlayer.currentTime);
+    });
     this.spotifyService.lireMusic(music, this.styleMusic).subscribe((data) => {
       this.audioUrl = data;
-      const audioPlayer = document.getElementById('audioPlayer') as HTMLAudioElement;
-      if (audioPlayer) {
-        audioPlayer.src = this.audioUrl;
-        audioPlayer.load();
-        audioPlayer.play();
-      }
+      console.log("ok")
+      this.audioPlayer.src = this.audioUrl;
+      this.audioPlayer.load(); // Charger la nouvelle source
+      this.audioPlayer.onloadeddata = () => {
+        this.currentPlayingMusic = music;
+        this.isLoading = false;
+        this.audioPlayer.play(); // Démarrer la lecture une fois que la nouvelle source est chargée
+      };
     });
+  }
+  formatTime(time: number): string {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  }
+  isMusicPlaying : boolean = false;
+  togglePlayPause(music: string, index: number) {
+    if (this.selectedMusicIndex === index) {
+      if (this.isMusicPlaying) {
+        // Mettre en pause la musique
+        this.audioPlayer.pause();
+      } else {
+        // Reprendre la lecture de la musique
+        this.audioPlayer.play();
+      }
+      // Inverser l'état de lecture
+      this.isMusicPlaying = !this.isMusicPlaying;
+    } else {
+      // Si une autre musique est sélectionnée, démarrer la lecture de celle-ci
+      this.listenToMusic(music, index);
+      this.isMusicPlaying = true;
+    }
+  }
+  volume: number = 0.5;
+  volumeList: number[] = new Array(this.musicList.length).fill(1);
+  setVolume(i:number) {
+    if (this.audioPlayer) {
+      this.audioPlayer.volume = this.volumeList[i];
+    }
   }
 }

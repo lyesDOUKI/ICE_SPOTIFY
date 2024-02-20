@@ -9,6 +9,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./upload-music.component.css']
 })
 export class UploadMusicComponent {
+  uploadedFileName: string | undefined;
   isLoading : boolean = false; // Variable pour afficher ou cacher le spinner
   selectedStyle: string = ''; // Variable pour stocker le style de musique sélectionné
 
@@ -17,9 +18,9 @@ export class UploadMusicComponent {
 
   // Fonction pour mettre à jour le nom du fichier sélectionné
   updateFileName(event: any) {
-    const fileName = event.target.files[0].name;
-    const label = document.querySelector('.input-group-text') as HTMLLabelElement;
-    label.innerText = fileName;
+    const fileInput = document.getElementById('mp3file') as HTMLInputElement;
+    const file = fileInput.files![0];
+    this.uploadedFileName = file.name;
   }
 
   // Fonction pour soumettre le formulaire
@@ -28,6 +29,7 @@ export class UploadMusicComponent {
     // Récupérer le fichier sélectionné
     const fileInput = document.getElementById('mp3file') as HTMLInputElement;
     const file = fileInput.files![0];
+    this.uploadedFileName = file.name; // Mettre à jour le nom du fichier uploadé
     // Créer un objet FormData pour envoyer le fichier
     const formData = new FormData();
     formData.append('file', file);
@@ -44,5 +46,10 @@ export class UploadMusicComponent {
         }
       }
     );
+  }
+  deleteUploadedFile() {
+    const fileInput = document.getElementById('mp3file') as HTMLInputElement;
+    fileInput.files = null; // Supprimer le fichier sélectionné
+    this.uploadedFileName = undefined; // Supprimer le nom du fichier uploadé
   }
 }

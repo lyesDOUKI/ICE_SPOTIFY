@@ -1,49 +1,131 @@
-.audio-player {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
+
+
+.music-item {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s ease;
+  align-items: center; /* Ajout pour aligner verticalement */
 }
-.controls {
-  margin-bottom: 20px;
+
+.music-item:last-child {
+  border-bottom: none;
 }
-.controls button {
-  background-color: #4CAF50;
+
+.left-content {
+  flex: 1;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333; /* Titre en noir pour contraster avec le fond */
+}
+
+.artist {
+  font-size: 14px;
+  color: #666; /* Couleur légèrement plus foncée */
+}
+
+.play-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center; /* Centrer le contenu */
+}
+
+.play-btn {
   border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
+  background-color: transparent;
   cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s;
+  outline: none;
+  font-size: 24px;
+  color: #007bff;
+  margin-right: 10px;
+  transition: transform 0.2s ease;
 }
-.controls button:hover {
-  background-color: #45a049;
+
+
+.time {
+  font-size: 14px;
+  color: #666;
 }
-.progress-bar {
-  background-color: #ddd;
-  height: 10px;
-  border-radius: 5px;
-  position: relative;
+.volume-container {
+  width: 150px; /* Ajustement de la largeur */
+  margin-left: 20px; /* Ajout d'espace entre les deux parties */
+  display: flex;
+  align-items: center;
+}
+
+.volume-bar {
   width: 100%;
-  overflow: hidden;
+  height: 8px; /* Ajustement de la hauteur */
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  cursor: pointer;
 }
-.progress-bar .progress {
-  background-color: #4CAF50;
+
+.volume-level {
   height: 100%;
-  border-radius: 5px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
+  background-color: #007bff;
+  border-radius: 4px;
+  width: 50%; /* Par défaut, la moitié de la barre */
 }
-.audio-player {
-  margin-left: -25px;
+
+.volume-bar::-webkit-slider-thumb {
+  appearance: none; /* Masquer le style par défaut de la poignée */
+  width: 16px;
+  height: 16px;
+  border-radius: 50%; /* Pour une forme de cercle */
+  background-color: #007bff; /* Couleur de la poignée */
+  cursor: pointer; /* Afficher le curseur de la souris lorsqu'il est survolé */
+}
+
+.volume-bar::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #007bff;
+  cursor: pointer;
+}
+.audio-container {
+  display: none; /* Cacher l'élément audio par défaut */
+}
+.spinner-border {
+  border: 2px solid #007bff; /* Couleur de bordure similaire à celle du bouton play */
+  border-top-color: transparent; /* Pour créer un spinner */
+  border-radius: 50%; /* Pour obtenir une forme ronde */
+  width: 24px; /* Taille similaire à celle du bouton play */
+  height: 24px; /* Taille similaire à celle du bouton play */
+  margin-right: 8px; /* Réduire légèrement la marge à droite */
+  margin-bottom: 2px; /* Déplacer légèrement vers le bas */
+  margin-left: 2px; /* Déplacer légèrement vers la gauche */
+  animation: spin 1s linear infinite; /* Animation de rotation */
+}
+
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg); /* Rotation complète */
+  }
+}
+.current-playing-music {
+  background-color: #4e8cff;
+  color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.current-playing-music::before {
+  content: '▶';
+  margin-right: 5px;
+}
+
+.current-playing-music span {
+  font-weight: bold;
+  margin-left: 5px;
 }

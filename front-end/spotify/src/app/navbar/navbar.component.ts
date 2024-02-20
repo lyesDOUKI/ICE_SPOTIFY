@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { AppComponent } from '../app.component';
 import { SpotifyCommService } from '../services/spotify-comm.service';
-
 @Component({
-  selector: 'app-music-by-style',
-  templateUrl: './music-by-style.component.html',
-  styleUrls: ['./music-by-style.component.css']
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.css']
 })
-export class MusicByStyleComponent {
+export class NavbarComponent {
   selectedStyle: string = ''; // Variable pour stocker le style sélectionné
   isLoading: boolean = false;
   constructor(private appComponent: AppComponent, private spotifyService : SpotifyCommService) { }

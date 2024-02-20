@@ -1,0 +1,83 @@
+.upload-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.genre-select {
+  padding: 10px; /* Ajout de padding */
+  background-color: rgba(240, 240, 240, 0.7);
+  color: #333;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px; /* Modification de la taille de la police */
+  width: 100%;
+  max-width: 400px; /* Ajout d'une largeur maximale */
+}
+
+/* Au survol */
+.genre-select:hover {
+  background-color: rgba(221, 221, 221, 0.7);
+}
+/* Style pour le bouton "Valider" */
+.upload-btn {
+padding: 10px 20px; /* Réduction de la taille du padding */
+background-color: rgba(240, 240, 240, 0.7);
+color: #333;
+border: none;
+border-radius: 30px;
+cursor: pointer;
+font-size: 16px; /* Augmentation de la taille de la police */
+transition: background-color 0.3s ease;
+width: 100%;
+max-width: 200px; /* Réduction de la largeur maximale */
+}
+
+
+
+/* Au survol */
+.upload-btn:hover {
+  background-color: rgba(221, 221, 221, 0.7);
+}
+.file-input {
+  display: none;
+}
+
+.file-label {
+  display: inline-block;
+  padding: 15px 40px;
+  background-color: rgba(240, 240, 240, 0.7); /* Fond légèrement transparent */
+  color: #333; /* Texte en noir pour contraster */
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+}
+
+.file-label:hover {
+  background-color: rgba(221, 221, 221, 0.7); /* Teinte plus foncée au survol */
+}
+.file-upload-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(240, 240, 240, 0.7);
+  color: #333;
+  padding: 15px;
+  border-radius: 30px;
+  font-size: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.upload-info {
+  flex: 1;
+}
+
+.delete-icon {
+  cursor: pointer;
+  margin-left: 10px;
+  color: red;
+  font-size: 20px;
+}

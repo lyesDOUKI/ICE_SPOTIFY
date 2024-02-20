@@ -9,16 +9,16 @@ import { ToastrModule } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UpdateMusicComponent } from './update-music/update-music.component';
-import { MusicByStyleComponent } from './music-by-style/music-by-style.component';
 import { DisplayMusicsComponent } from './display-musics/display-musics.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     UploadMusicComponent,
     UpdateMusicComponent,
-    MusicByStyleComponent,
     DisplayMusicsComponent,
+    NavbarComponent,
 
   ],
   imports: [
