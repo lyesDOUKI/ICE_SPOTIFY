@@ -2,29 +2,26 @@ package iceimplements;
 
 import com.zeroc.Ice.Current;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.*;
 import java.util.Properties;
-import java.io.ByteArrayOutputStream;
 
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.advanced.AdvancedPlayer;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
-import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
+
 
 public class SpotifyManagerImplement implements Spotify.SpotifyManager {
 
     private static final String CONFIG_FILE = "config.properties";
     private static final String DESTINATION_PROPERTY = "destination.directory";
+    private static final String IP_PROPERTY = "ip.address";
     private String destination = "";
+    private String ip = "";
     MediaPlayerFactory mediaPlayerFactory;
     MediaPlayer mediaPlayer;
 
@@ -39,6 +36,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
             Properties properties = new Properties();
             properties.load(getClass().getClassLoader().getResourceAsStream(CONFIG_FILE));
             destination = properties.getProperty(DESTINATION_PROPERTY);
+            ip = properties.getProperty(IP_PROPERTY);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -126,7 +124,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         }
         try {
             int port = findAvailablePort();
-            String streamUrl = "127.0.0.1:" + port; // Adresse de diffusion multicast
+            String streamUrl = this.ip + ":" + port; // Adresse de diffusion multicast
             String options =
                     ":sout=#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:duplicate{dst=std{access=http,mux=mp3,dst=" + streamUrl + "}}";
             /*String url = "/" + musicName + ".mp3";
@@ -154,4 +152,5 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
             throw new RuntimeException("Erreur lors de la recherche d'un port disponible", e);
         }
     }
+
 }

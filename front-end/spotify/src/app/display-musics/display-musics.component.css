@@ -129,3 +129,30 @@
   font-weight: bold;
   margin-left: 5px;
 }
+.action-icons {
+  display: flex;
+  align-items: center;
+}
+
+.action-icon {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-left: 10px;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  transition: transform 0.2s ease;
+}
+
+.action-icon:hover {
+  transform: scale(1.00);
+}
+
+.edit-icon::after {
+  content: "✎";
+}
+
+.delete-icon::after {
+  content: "❌";
+}

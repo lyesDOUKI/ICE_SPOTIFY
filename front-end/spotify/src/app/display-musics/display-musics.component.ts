@@ -31,6 +31,7 @@ export class DisplayMusicsComponent {
     }else{
       this.notification.showNotification("Echec de la suppression de la musique", "danger");
     }
+    this.isLoading = false;
   }
     ));
   }
