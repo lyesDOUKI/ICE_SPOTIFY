@@ -156,3 +156,17 @@
 .delete-icon::after {
   content: "❌";
 }
+.stop-btn {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+  font-size: 24px;
+  color: #4CAF50; /* Changement de couleur en vert */
+  margin-right: 10px;
+  transition: transform 0.2s ease;
+}
+
+.stop-btn:hover {
+  transform: scale(1); /* Retrait de l'effet de survol */
+}

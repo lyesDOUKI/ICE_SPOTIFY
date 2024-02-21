@@ -27,6 +27,8 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
 
     String lireLaMusique(String musicName, String musicStyle, com.zeroc.Ice.Current current);
 
+    int stopMusique(String musicName, String musicStyle, com.zeroc.Ice.Current current);
+
     /** @hidden */
     static final String[] _iceIds =
     {
@@ -159,6 +161,29 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
         return inS.setResult(ostr);
     }
 
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_stopMusique(SpotifyManager obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_musicName;
+        String iceP_musicStyle;
+        iceP_musicName = istr.readString();
+        iceP_musicStyle = istr.readString();
+        inS.endReadParams();
+        int ret = obj.stopMusique(iceP_musicName, iceP_musicStyle, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        ostr.writeInt(ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
     /** @hidden */
     final static String[] _iceOps =
     {
@@ -169,6 +194,7 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
         "ice_isA",
         "ice_ping",
         "lireLaMusique",
+        "stopMusique",
         "update",
         "upload"
     };
@@ -216,9 +242,13 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
             }
             case 7:
             {
-                return _iceD_update(this, in, current);
+                return _iceD_stopMusique(this, in, current);
             }
             case 8:
+            {
+                return _iceD_update(this, in, current);
+            }
+            case 9:
             {
                 return _iceD_upload(this, in, current);
             }

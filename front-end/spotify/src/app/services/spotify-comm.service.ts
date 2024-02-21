@@ -25,4 +25,7 @@ export class SpotifyCommService {
   lireMusic(music: string, style: string) {
     return this.http.get<any>(this.baseUrl+"/ecouter/"+music+"/"+style);
   }
+  stopMusic(music : string, style: string) {
+    return this.http.post<any>(this.baseUrl+"/stop", {music, style});
+  }
 }

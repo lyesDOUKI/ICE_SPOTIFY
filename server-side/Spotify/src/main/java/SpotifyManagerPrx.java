@@ -217,6 +217,48 @@ public interface SpotifyManagerPrx extends com.zeroc.Ice.ObjectPrx
         return f;
     }
 
+    default int stopMusique(String musicName, String musicStyle)
+    {
+        return stopMusique(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default int stopMusique(String musicName, String musicStyle, java.util.Map<String, String> context)
+    {
+        return _iceI_stopMusiqueAsync(musicName, musicStyle, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<java.lang.Integer> stopMusiqueAsync(String musicName, String musicStyle)
+    {
+        return _iceI_stopMusiqueAsync(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<java.lang.Integer> stopMusiqueAsync(String musicName, String musicStyle, java.util.Map<String, String> context)
+    {
+        return _iceI_stopMusiqueAsync(musicName, musicStyle, context, false);
+    }
+
+    /**
+     * @hidden
+     * @param iceP_musicName -
+     * @param iceP_musicStyle -
+     * @param context -
+     * @param sync -
+     * @return -
+     **/
+    default com.zeroc.IceInternal.OutgoingAsync<java.lang.Integer> _iceI_stopMusiqueAsync(String iceP_musicName, String iceP_musicStyle, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<java.lang.Integer> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "stopMusique", null, sync, null);
+        f.invoke(true, context, null, ostr -> {
+                     ostr.writeString(iceP_musicName);
+                     ostr.writeString(iceP_musicStyle);
+                 }, istr -> {
+                     int ret;
+                     ret = istr.readInt();
+                     return ret;
+                 });
+        return f;
+    }
+
     /**
      * Contacts the remote server to verify that the object implements this type.
      * Raises a local exception if a communication error occurs.

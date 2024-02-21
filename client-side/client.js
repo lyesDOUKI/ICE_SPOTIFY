@@ -7,6 +7,7 @@ const loadMusicsByStyle = require('./ice/ice-loadMusics');
 const updateMusic = require('./ice/ice-updateMusic');
 const deleteMusic = require('./ice/ice-deleteMusic');
 const readMusic = require('./ice/ice-readMusic');
+const stopMusic = require('./ice/ice-stopMusic');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const app = express();
@@ -108,6 +109,14 @@ app.get('/ecouter/:music/:style', async (req, res) => {
     const url = await readMusic(musicName, musicStyle);
     res.set('Content-Type', 'audio/mpeg');
     return res.status(200).json(url);
+});
+app.post('/stop', async (req, res) => {
+    console.log("dans la route stop");
+    const musicName = req.body.music;
+    const musicStyle = req.body.style;
+    console.log("stop music: ", musicName);
+    const result = await stopMusic(musicName, musicStyle);
+    return res.status(200).json({statut : result});
 });
 io.on('connection', (socket) => {
     console.log('Un client s\'est connecté');

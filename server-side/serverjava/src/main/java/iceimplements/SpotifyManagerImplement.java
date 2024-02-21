@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.*;
+import java.util.HashMap;
 import java.util.Properties;
 
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -22,13 +23,12 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     private static final String IP_PROPERTY = "ip.address";
     private String destination = "";
     private String ip = "";
-    MediaPlayerFactory mediaPlayerFactory;
-    MediaPlayer mediaPlayer;
-
+    private MediaPlayerFactory mediaPlayerFactory;
+    private HashMap<String, MediaPlayer> mediaPlayerHashMap;
     public SpotifyManagerImplement() {
         loadConfiguration();
         this.mediaPlayerFactory = new MediaPlayerFactory();
-        this.mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+        this.mediaPlayerHashMap = new HashMap<>();
     }
 
     private void loadConfiguration() {
@@ -114,35 +114,38 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
                 musicName.substring(0, musicName.length() - 4) : musicName;
         String fullPath = destination + musicStyle + "\\" + cleanMusicName + ".mp3";
         Path path = Paths.get(fullPath);
-        //verifier si media player est en cours de lecture
-        if (mediaPlayer.status().isPlaying()) {
-            System.out.println("Arrêt de la lecture en cours ...");
-            mediaPlayer.controls().stop();
-            mediaPlayer.release();
-            System.out.println("Lecture arrêtée avec succès !");
-            mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
-        }
+        MediaPlayer mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
         try {
             int port = findAvailablePort();
             String streamUrl = this.ip + ":" + port; // Adresse de diffusion multicast
             String options =
                     ":sout=#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:duplicate{dst=std{access=http,mux=mp3,dst=" + streamUrl + "}}";
-            /*String url = "/" + musicName + ".mp3";
-            String streamStr = "#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:http{dst=:" + port + url + "}";*/
-            mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-                @Override
-                public void playing(MediaPlayer mediaPlayer) {
-                    System.out.println("Lien d'écoute : http://" + streamUrl);
-                }
-            });
-            //mediaPlayer.audio().setVolume(0);
+            eventsMediaPlayer(mediaPlayer, streamUrl);
             mediaPlayer.media().play(fullPath, (String) options, ":no-sout-rtp-sap", ":no-sout-standard-sap", ":sout-all", ":sout-keep");
+            mediaPlayerHashMap.put(cleanMusicName, mediaPlayer);
             return "http://" + streamUrl;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
+    @Override
+    public int stopMusique(String musicName, String musicStyle, Current current) {
+        int result = 0; // 1 = action effectuée, 0 = action non effectuée
+        String cleanMusicName = musicName.endsWith(".mp3") ?
+                musicName.substring(0, musicName.length() - 4) : musicName;
+        MediaPlayer mediaPlayer = mediaPlayerHashMap.get(cleanMusicName);
+        if (mediaPlayer != null) {
+            mediaPlayer.controls().stop();
+            mediaPlayer.release();
+            mediaPlayerHashMap.remove(cleanMusicName);
+            result = 1;
+            System.out.println("Action stop ok");
+        }
+        return result;
+    }
+
     private int findAvailablePort() {
         // Créer un socket IPv4 pour un protocole de type TCP
         try (java.net.ServerSocket socket = new java.net.ServerSocket(0)) {
@@ -152,5 +155,42 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
             throw new RuntimeException("Erreur lors de la recherche d'un port disponible", e);
         }
     }
-
+    private void eventsMediaPlayer(MediaPlayer mediaPlayer, String streamUrl)
+    {
+        final int[] checkMediaStatus = {0}; // 0 à garder dans la hashmap, 1 à supprimer de la hashmap
+        mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+            @Override
+            public void playing(MediaPlayer mediaPlayer) {
+                System.out.println("Lien d'écoute : http://" + streamUrl);
+            }
+        });
+        mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+            @Override
+            public void finished(MediaPlayer mediaPlayer) {
+                System.out.println("Musique terminée ...");
+                mediaPlayer.release();
+                checkMediaStatus[0] = 1;
+            }
+        });
+        mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+            @Override
+            public void error(MediaPlayer mediaPlayer) {
+                System.out.println("Erreur lors de la lecture de la musique ...");
+                mediaPlayer.release();
+                checkMediaStatus[0] = 1;
+            }
+        });
+        mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+            @Override
+            public void stopped(MediaPlayer mediaPlayer) {
+                System.out.println("Musique arrêtée ...");
+            }
+        });
+        //check si le media est à supprier de la hashmap
+        if(checkMediaStatus[0] == 1)
+        {
+            System.out.println("Suppression de la musique de la hashmap ...");
+            mediaPlayer.release();
+        }
+    }
 }

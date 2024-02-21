@@ -83,9 +83,19 @@ export class DisplayMusicsComponent {
       // Mettre à jour le temps écoulé de la musique
       this.currentTime = this.formatTime(this.audioPlayer.currentTime);
     });
+    this.audioPlayer.addEventListener('ended', () => {
+      // Désabonnez-vous du flux ou effectuez d'autres nettoyages nécessaires
+      // Réinitialisez le compteur de lecture à zéro
+      this.currentPlayingMusic = null;
+      this.selectedMusicIndex = null;
+      this.isMusicPlaying = false;
+      this.currentTime = '0:00'; // Réinitialisez le temps écoulé à zéro
+      this.audioPlayer.currentTime = 0; // Réinitialisez le lecteur audio à zéro
+      this.audioPlayer.pause(); // Mettez en pause la lecture
+      this.audioPlayer.src = ''; // Supprimez le src de l'élément audio
+    });
     this.spotifyService.lireMusic(music, this.styleMusic).subscribe((data) => {
       this.audioUrl = data;
-      console.log("ok")
       this.audioPlayer.src = this.audioUrl;
       this.audioPlayer.load(); // Charger la nouvelle source
       this.audioPlayer.onloadeddata = () => {
@@ -124,5 +134,18 @@ export class DisplayMusicsComponent {
     if (this.audioPlayer) {
       this.audioPlayer.volume = this.volumeList[i];
     }
+  }
+  stopMusic(music :any , i:number){
+    this.spotifyService.stopMusic(music, this.styleMusic).subscribe((data)=>{
+      if(data.statut === 1){
+        this.currentPlayingMusic = null;
+        this.selectedMusicIndex = null;
+        this.isMusicPlaying = false;
+        this.audioPlayer.pause();
+        this.audioPlayer.currentTime = 0;
+        this.volumeList[i] = 0.5;
+        this.setVolume(i);
+      }
+    });
   }
 }
