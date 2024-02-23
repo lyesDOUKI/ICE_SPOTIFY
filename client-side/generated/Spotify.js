@@ -48,7 +48,7 @@
         "update": [, , , , , [[7], [7], [7]], , , , ],
         "getMusicByStyle": [, , , , ["Spotify.listOfMusicByStyleHelper"], [[7]], , , , ],
         "lireLaMusique": [, , , , [7], [[7], [7]], , , , ],
-        "stopMusique": [, , , , [3], [[7], [7]], , , , ]
+        "stopMusique": [, , , , [3], [[7]], , , , ]
     });
     exports.Spotify = Spotify;
 }

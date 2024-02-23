@@ -217,40 +217,38 @@ public interface SpotifyManagerPrx extends com.zeroc.Ice.ObjectPrx
         return f;
     }
 
-    default int stopMusique(String musicName, String musicStyle)
+    default int stopMusique(String urlDeDiffusion)
     {
-        return stopMusique(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+        return stopMusique(urlDeDiffusion, com.zeroc.Ice.ObjectPrx.noExplicitContext);
     }
 
-    default int stopMusique(String musicName, String musicStyle, java.util.Map<String, String> context)
+    default int stopMusique(String urlDeDiffusion, java.util.Map<String, String> context)
     {
-        return _iceI_stopMusiqueAsync(musicName, musicStyle, context, true).waitForResponse();
+        return _iceI_stopMusiqueAsync(urlDeDiffusion, context, true).waitForResponse();
     }
 
-    default java.util.concurrent.CompletableFuture<java.lang.Integer> stopMusiqueAsync(String musicName, String musicStyle)
+    default java.util.concurrent.CompletableFuture<java.lang.Integer> stopMusiqueAsync(String urlDeDiffusion)
     {
-        return _iceI_stopMusiqueAsync(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+        return _iceI_stopMusiqueAsync(urlDeDiffusion, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
     }
 
-    default java.util.concurrent.CompletableFuture<java.lang.Integer> stopMusiqueAsync(String musicName, String musicStyle, java.util.Map<String, String> context)
+    default java.util.concurrent.CompletableFuture<java.lang.Integer> stopMusiqueAsync(String urlDeDiffusion, java.util.Map<String, String> context)
     {
-        return _iceI_stopMusiqueAsync(musicName, musicStyle, context, false);
+        return _iceI_stopMusiqueAsync(urlDeDiffusion, context, false);
     }
 
     /**
      * @hidden
-     * @param iceP_musicName -
-     * @param iceP_musicStyle -
+     * @param iceP_urlDeDiffusion -
      * @param context -
      * @param sync -
      * @return -
      **/
-    default com.zeroc.IceInternal.OutgoingAsync<java.lang.Integer> _iceI_stopMusiqueAsync(String iceP_musicName, String iceP_musicStyle, java.util.Map<String, String> context, boolean sync)
+    default com.zeroc.IceInternal.OutgoingAsync<java.lang.Integer> _iceI_stopMusiqueAsync(String iceP_urlDeDiffusion, java.util.Map<String, String> context, boolean sync)
     {
         com.zeroc.IceInternal.OutgoingAsync<java.lang.Integer> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "stopMusique", null, sync, null);
         f.invoke(true, context, null, ostr -> {
-                     ostr.writeString(iceP_musicName);
-                     ostr.writeString(iceP_musicStyle);
+                     ostr.writeString(iceP_urlDeDiffusion);
                  }, istr -> {
                      int ret;
                      ret = istr.readInt();

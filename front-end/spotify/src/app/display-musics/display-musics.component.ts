@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UpdateMusicComponent } from '../update-music/update-music.component';
 import { SpotifyCommService } from '../services/spotify-comm.service';
 import { NotificationService } from '../services/notifications.service';
@@ -16,7 +16,9 @@ export class DisplayMusicsComponent {
   @Input() styleMusic = ''; // Style de musique à afficher
   isLoading: boolean = false;
   constructor(private spotifyService : SpotifyCommService,
-    private notification : NotificationService) { }
+    private notification : NotificationService, private elementRef: ElementRef) { }
+
+
   deleteMusic(music: string) {
     // Logique pour supprimer la musique
     this.isLoading = true;
@@ -72,9 +74,31 @@ export class DisplayMusicsComponent {
   @ViewChild('audioContainer') audioContainer!: ElementRef;
   audioPlayer!: HTMLAudioElement;
   listenToMusic(music: string, index: number) {
+    //vérifer d'abord si une musique est en cours de lecture
+    if(this.currentPlayingMusic){
+      this.spotifyService.stopMusic(this.audioUrl).subscribe((data)=>{
+        if(data.statut === 1){
+          this.currentPlayingMusic = null;
+          this.selectedMusicIndex = null;
+          this.isMusicPlaying = false;
+          this.audioPlayer.pause();
+          this.audioPlayer.src = '';
+          this.audioPlayer.currentTime = 0;
+          this.lireMusique(music, index);
+          this.isMusicPlaying = true;
+        }
+      });
+    }else{
+      this.lireMusique(music, index);
+    }
+  }
+  lireMusique(music : string, index: number)
+  {
     this.isLoading = true;
     this.selectedMusicIndex = index;
     this.audioPlayer = new Audio();
+    const sourceElement = document.createElement('source');
+    sourceElement.type = 'audio/mpeg';
     this.audioPlayer.addEventListener('loadedmetadata', () => {
       // Mettre à jour le temps total de la musique
       const totalTime = this.formatTime(this.audioPlayer.duration);
@@ -95,8 +119,11 @@ export class DisplayMusicsComponent {
       this.audioPlayer.src = ''; // Supprimez le src de l'élément audio
     });
     this.spotifyService.lireMusic(music, this.styleMusic).subscribe((data) => {
+
       this.audioUrl = data;
-      this.audioPlayer.src = this.audioUrl;
+      sourceElement.src = this.audioUrl;
+      this.audioPlayer.appendChild(sourceElement);
+      this.elementRef.nativeElement.appendChild(this.audioPlayer);
       this.audioPlayer.load(); // Charger la nouvelle source
       this.audioPlayer.onloadeddata = () => {
         this.currentPlayingMusic = music;
@@ -136,12 +163,13 @@ export class DisplayMusicsComponent {
     }
   }
   stopMusic(music :any , i:number){
-    this.spotifyService.stopMusic(music, this.styleMusic).subscribe((data)=>{
+    this.spotifyService.stopMusic(this.audioUrl).subscribe((data)=>{
       if(data.statut === 1){
         this.currentPlayingMusic = null;
         this.selectedMusicIndex = null;
         this.isMusicPlaying = false;
         this.audioPlayer.pause();
+        this.currentTime = '0:00';
         this.audioPlayer.currentTime = 0;
         this.volumeList[i] = 0.5;
         this.setVolume(i);

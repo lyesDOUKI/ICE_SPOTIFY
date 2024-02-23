@@ -5,3 +5,13 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
+@media screen and (max-width: 768px) {
+  .music-list {
+    width: 100%; /* Utiliser toute la largeur de l'écran */
+    padding: 0 10px; /* Ajouter une marge de 10px à gauche et à droite */
+    max-width: none; /* Supprimer la limite de largeur maximale */
+    border-radius: 0; /* Supprimer la bordure arrondie */
+    box-shadow: none; /* Supprimer l'ombre */
+    background-color: rgba(255, 255, 255, 0.8); /* Conserver le fond légèrement transparent */
+  }
+}

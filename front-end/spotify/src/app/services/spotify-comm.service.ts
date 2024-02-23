@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class SpotifyCommService {
 
-  private readonly baseUrl = 'http://localhost:3000'; // URL de base
+  private readonly baseUrl = 'http://172.20.10.12:3000'; // URL de base
 
   constructor(private http: HttpClient) { }
 
@@ -25,7 +25,7 @@ export class SpotifyCommService {
   lireMusic(music: string, style: string) {
     return this.http.get<any>(this.baseUrl+"/ecouter/"+music+"/"+style);
   }
-  stopMusic(music : string, style: string) {
-    return this.http.post<any>(this.baseUrl+"/stop", {music, style});
+  stopMusic(audioUrl: string) {
+    return this.http.post<any>(this.baseUrl+"/stop", {audioUrl});
   }
 }

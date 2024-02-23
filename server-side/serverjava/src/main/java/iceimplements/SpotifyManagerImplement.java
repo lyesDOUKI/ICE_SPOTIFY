@@ -122,7 +122,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
                     ":sout=#transcode{acodec=mp3,ab=128,channels=2,samplerate=44100}:duplicate{dst=std{access=http,mux=mp3,dst=" + streamUrl + "}}";
             eventsMediaPlayer(mediaPlayer, streamUrl);
             mediaPlayer.media().play(fullPath, (String) options, ":no-sout-rtp-sap", ":no-sout-standard-sap", ":sout-all", ":sout-keep");
-            mediaPlayerHashMap.put(cleanMusicName, mediaPlayer);
+            mediaPlayerHashMap.put(("http://" + streamUrl), mediaPlayer);
             return "http://" + streamUrl;
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,17 +131,18 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     }
 
     @Override
-    public int stopMusique(String musicName, String musicStyle, Current current) {
+    public int stopMusique(String urlDeDiffusion, Current current) {
         int result = 0; // 1 = action effectuée, 0 = action non effectuée
-        String cleanMusicName = musicName.endsWith(".mp3") ?
-                musicName.substring(0, musicName.length() - 4) : musicName;
-        MediaPlayer mediaPlayer = mediaPlayerHashMap.get(cleanMusicName);
-        if (mediaPlayer != null) {
+        //chercher le media player dans la hashmap
+        System.out.println("Arrêt de la musique ... : " + urlDeDiffusion);
+        MediaPlayer mediaPlayer = mediaPlayerHashMap.get(urlDeDiffusion);
+        if (mediaPlayer != null && mediaPlayer.status().isPlaying()) {
             mediaPlayer.controls().stop();
             mediaPlayer.release();
-            mediaPlayerHashMap.remove(cleanMusicName);
+            mediaPlayerHashMap.remove(urlDeDiffusion);
             result = 1;
-            System.out.println("Action stop ok");
+        }else {
+            System.out.println("Aucun media player trouvé dans la hashmap ...");
         }
         return result;
     }
@@ -190,7 +191,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         if(checkMediaStatus[0] == 1)
         {
             System.out.println("Suppression de la musique de la hashmap ...");
-            mediaPlayer.release();
+            mediaPlayerHashMap.remove(streamUrl);
         }
     }
 }

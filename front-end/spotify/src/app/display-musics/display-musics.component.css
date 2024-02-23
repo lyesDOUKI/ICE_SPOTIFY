@@ -170,3 +170,68 @@
 .stop-btn:hover {
   transform: scale(1); /* Retrait de l'effet de survol */
 }
+@media screen and (max-width: 768px) {
+  .music-item {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px; /* Réduire l'espacement */
+    border-bottom: 1px solid #eee;
+    align-items: center;
+  }
+
+  .left-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 3px;
+    color: #333;
+  }
+
+  .artist {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .play-container {
+    display: flex;
+    align-items: center;
+    margin-top: 3px;
+    flex-basis: 100%;
+  }
+
+  .play-btn,
+  .stop-btn {
+    font-size: 16px;
+    margin-right: 3px;
+  }
+
+  .volume-container {
+    width: 100%;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .volume-bar {
+    width: 100px;
+    height: 3px;
+  }
+
+  .action-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 3px;
+    flex-basis: 100%;
+  }
+
+  .action-icon {
+    font-size: 12px;
+    margin-left: 3px;
+  }
+}

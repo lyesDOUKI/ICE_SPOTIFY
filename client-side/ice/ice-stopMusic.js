@@ -1,7 +1,7 @@
 const Ice = require("ice").Ice;
 const Spotify = require("../generated/Spotify").Spotify;
 
-async function stopMusic(musicName, musicStyle) {
+async function stopMusic(urlToStop) {
     let communicator;
     try {
         communicator = Ice.initialize();
@@ -9,7 +9,7 @@ async function stopMusic(musicName, musicStyle) {
         const SpotifyManager = await Spotify.SpotifyManagerPrx.checkedCast(base);
         if (SpotifyManager) {
             console.log("Je récupère SpotifyManager");
-            const result = await SpotifyManager.stopMusique(musicName, musicStyle);
+            const result = await SpotifyManager.stopMusique(urlToStop);
             console.log("action stop : " + result);
             return result;
         } else {

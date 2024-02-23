@@ -40,7 +40,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200'); // Autoriser les requêtes depuis Angular (remplacer localhost:4200 par votre domaine Angular si nécessaire)
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Autoriser les requêtes depuis Angular (remplacer localhost:4200 par votre domaine Angular si nécessaire)
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -112,10 +112,9 @@ app.get('/ecouter/:music/:style', async (req, res) => {
 });
 app.post('/stop', async (req, res) => {
     console.log("dans la route stop");
-    const musicName = req.body.music;
-    const musicStyle = req.body.style;
-    console.log("stop music: ", musicName);
-    const result = await stopMusic(musicName, musicStyle);
+    const urlToStop = req.body.audioUrl;
+    console.log("stop music on url : ", urlToStop);
+    const result = await stopMusic(urlToStop);
     return res.status(200).json({statut : result});
 });
 io.on('connection', (socket) => {

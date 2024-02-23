@@ -7,6 +7,6 @@ module Spotify {
         void update(string nameMusic, string newNameMusic, string styleMusic);
         listOfMusicByStyle getMusicByStyle(string styleMusic);
         string lireLaMusique(string musicName, string musicStyle);
-        int stopMusique(string musicName, string musicStyle);
+        int stopMusique(string urlDeDiffusion);
     };
 };

@@ -27,7 +27,7 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
 
     String lireLaMusique(String musicName, String musicStyle, com.zeroc.Ice.Current current);
 
-    int stopMusique(String musicName, String musicStyle, com.zeroc.Ice.Current current);
+    int stopMusique(String urlDeDiffusion, com.zeroc.Ice.Current current);
 
     /** @hidden */
     static final String[] _iceIds =
@@ -172,12 +172,10 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
     {
         com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
         com.zeroc.Ice.InputStream istr = inS.startReadParams();
-        String iceP_musicName;
-        String iceP_musicStyle;
-        iceP_musicName = istr.readString();
-        iceP_musicStyle = istr.readString();
+        String iceP_urlDeDiffusion;
+        iceP_urlDeDiffusion = istr.readString();
         inS.endReadParams();
-        int ret = obj.stopMusique(iceP_musicName, iceP_musicStyle, current);
+        int ret = obj.stopMusique(iceP_urlDeDiffusion, current);
         com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
         ostr.writeInt(ret);
         inS.endWriteParams(ostr);
