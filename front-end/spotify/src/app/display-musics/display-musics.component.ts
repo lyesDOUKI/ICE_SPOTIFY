@@ -12,9 +12,57 @@ import { NotificationService } from '../services/notifications.service';
 })
 export class DisplayMusicsComponent {
   currentPlayingMusic: string | null = null;
-  @Input() musicList: string[] = []; // Liste des musiques à afficher
+  @Input() musicList: any[] = []; // Liste des musiques à afficher
   @Input() styleMusic = ''; // Style de musique à afficher
   isLoading: boolean = false;
+  showModal: boolean = false;
+  newTitle: string = '';
+  newAuthor: string = '';
+  newYear: number = 0;
+  oldName : string = '';
+  openModal(music : any) {
+    this.oldName = music.titre;
+    this.newTitle = music.titre;
+    this.newAuthor = music.auteur;
+    this.newYear = music.annee;
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
+  }
+  updateMusic()
+  {
+    if(this.isMusicPlaying)
+    {
+      this.spotifyService.stopMusic(this.audioUrl).subscribe((data)=>{
+        if(data.statut === 1){
+          this.currentPlayingMusic = null;
+          this.selectedMusicIndex = null;
+          this.isMusicPlaying = false;
+          this.audioPlayer.pause();
+          this.audioPlayer.src = '';
+          this.audioPlayer.currentTime = 0;
+        }
+      });
+    }
+    this.isLoading = true;
+    this.spotifyService.updateMusic(this.oldName,
+      this.newTitle, this.newAuthor, this.newYear, this.styleMusic).subscribe((response=>{
+      if(response.status === 200){
+        this.closeModal();
+        this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe((response=>{
+          if(response){
+            this.musicList = response;
+            this.notification.showNotification("Musique modifiée avec succès", "success");
+          }
+        }));
+      }else{
+        this.notification.showNotification("Echec de la modification de la musique", "danger");
+      }
+      this.isLoading = false;
+    }));
+  }
   constructor(private spotifyService : SpotifyCommService,
     private notification : NotificationService, private elementRef: ElementRef) { }
 
@@ -46,28 +94,7 @@ export class DisplayMusicsComponent {
     this.newMusicName = music; // Initialise le nouveau nom de musique avec le nom actuel
   }
 
-  updateMusicName() {
-    this.isLoading = true;
-    // Met à jour le nom de la musique dans la liste coté serveur
-    this.spotifyService.updateMusicName(this.editingMusic, this.newMusicName, this.styleMusic)
-    .subscribe((Response=>{
-      if(Response.status === 200){
-        this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe((response=>{
-          if(response){
-            this.musicList = response;
-            this.notification.showNotification("Nom de la musique modifié avec succès", "success");
-          }
-        }));
-      }else{
-        this.notification.showNotification("Echec de la modification du nom de la musique", "danger");
-      }
-      this.isLoading = false;
-    }));
-    //refaire un appel loadMusicsByStyle pour rafraichir la liste des musiques
 
-    this.editingMusic = ''; // Réinitialise la musique en cours d'édition
-    this.newMusicName = ''; // Réinitialise le nouveau nom de musique
-  }
   audioUrl : string = ''; // URL de la musique à lire
   selectedMusicIndex: number | null = null;
   currentTime = '0:00';
@@ -138,8 +165,8 @@ export class DisplayMusicsComponent {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
   isMusicPlaying : boolean = false;
-  togglePlayPause(music: string, index: number) {
-    if (this.selectedMusicIndex === index) {
+  togglePlayPause(music: any, index: number) {
+    if (this.selectedMusicIndex === index && this.currentPlayingMusic === music.titre) {
       if (this.isMusicPlaying) {
         // Mettre en pause la musique
         this.audioPlayer.pause();
@@ -151,7 +178,7 @@ export class DisplayMusicsComponent {
       this.isMusicPlaying = !this.isMusicPlaying;
     } else {
       // Si une autre musique est sélectionnée, démarrer la lecture de celle-ci
-      this.listenToMusic(music, index);
+      this.listenToMusic(music.titre, index);
       this.isMusicPlaying = true;
     }
   }
@@ -175,5 +202,13 @@ export class DisplayMusicsComponent {
         this.setVolume(i);
       }
     });
+  }
+  closeModalOutside(event: MouseEvent) {
+    const targetElement = event.target as HTMLElement;
+    const modal = document.querySelector('.modal-content') as HTMLElement;
+
+    if (targetElement.classList.contains('modal') || !modal.contains(targetElement)) {
+      this.showModal = false; // Fermer le modal
+    }
   }
 }

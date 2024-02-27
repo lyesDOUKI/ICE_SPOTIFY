@@ -11,7 +11,7 @@ export class AppComponent{
 
   audioUrl : string = ''; // URL de la musique à lire
   //list of music, à passer en input du composant app-display-musics
-  musicList: string[] = [
+  musicList: any[] = [
   ];
   styleMusic = ''; // Style de musique à afficher
   constructor(private spotify:SpotifyCommService) { }
@@ -28,7 +28,7 @@ export class AppComponent{
   hideDisplayMusicComponent() {
     this.showDisplayMusics = false;
   }
-  setMusicList(musicList: string[]) {
+  setMusicList(musicList: any[]) {
     this.musicList = musicList;
   }
   setStyleMusic(styleMusic: string) {

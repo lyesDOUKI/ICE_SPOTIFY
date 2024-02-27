@@ -3,8 +3,8 @@
 </div>
 <div class="music-item" *ngFor="let music of musicList; let i = index">
   <div class="left-content">
-    <div class="title">{{ music }}</div>
-    <div class="artist">{{ music }}</div>
+    <div class="title">{{ music.titre }}</div>
+    <div class="artist">{{ music.auteur }}  {{music.annee}}</div>
   </div>
   <div class="play-container">
     <div>
@@ -15,7 +15,7 @@
         </div>
         <div *ngIf="!isLoading">
           <ng-container *ngIf="selectedMusicIndex === i && isMusicPlaying
-                                && music === currentPlayingMusic">
+                                && music.titre === currentPlayingMusic">
             <!-- Si la musique est en cours de lecture -->
             &#10073;&#10073;
           </ng-container>
@@ -24,7 +24,7 @@
             &#9658;
           </ng-container>
           <ng-container *ngIf="selectedMusicIndex === i &&
-                     isMusicPlaying && music !== currentPlayingMusic">
+                     isMusicPlaying && music.titre !== currentPlayingMusic">
             <!-- Si la musique est en pause -->
             &#9658;
           </ng-container>
@@ -35,7 +35,7 @@
         </div>
       </button>
       <!-- Bouton Stop -->
-      <button class="stop-btn" *ngIf="selectedMusicIndex === i && isMusicPlaying && music === currentPlayingMusic"
+      <button class="stop-btn" *ngIf="selectedMusicIndex === i && isMusicPlaying && music.titre === currentPlayingMusic"
               (click)="stopMusic(music, i)">
         &#9632;
       </button>
@@ -46,16 +46,50 @@
   </div>
   <div class="volume-container">
     <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volumeList[i]" (input)="setVolume(i)"
-           [disabled]="selectedMusicIndex !== i || currentPlayingMusic !== music" class="volume-bar">
+           [disabled]="selectedMusicIndex !== i || currentPlayingMusic !== music.titre" class="volume-bar">
   </div>
   <div class="action-icons">
-    <button class="action-icon edit-icon" (click)="editMusic(music)">
+    <button class="action-icon edit-icon" (click)="openModal(music)">
       <!-- Icône de modification -->
       Modifier
     </button>
-    <button class="action-icon delete-icon" (click)="deleteMusic(music)">
+    <button class="action-icon delete-icon" (click)="deleteMusic(music.titre)">
       <!-- Icône de suppression -->
       Supprimer
     </button>
+  </div>
+</div>
+<div class="modal" [ngClass]="{'open': showModal}"
+(click)="closeModalOutside($event)">
+  <div class="modal-content">
+    <!-- Contenu du modal -->
+    <h2>Modifier la musique</h2>
+    <form >
+      <div class="form-group">
+        <label for="title">Titre :</label>
+        <div class="input-container">
+          <input type="text" id="title" name="title" [(ngModel)]="newTitle" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="author">Auteur :</label>
+        <div class="input-container">
+          <input type="text" id="author" name="author" [(ngModel)]="newAuthor" required>
+        </div>
+
+      </div>
+      <div class="form-group">
+        <label for="year">Année :</label>
+        <div class="input-container">
+          <input type="text" id="year" name="year" [(ngModel)]="newYear" required>
+        </div>
+      </div>
+      <div>
+        <button class="upload-btn mt-3 me-3" type="submit" (click)="updateMusic()">Valider</button>
+        <button class="upload-btn" (click)="closeModal()">Fermer</button>
+      </div>
+
+    </form>
+
   </div>
 </div>

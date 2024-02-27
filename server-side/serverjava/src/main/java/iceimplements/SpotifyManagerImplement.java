@@ -1,15 +1,20 @@
 package iceimplements;
 
+import Spotify.Music;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.zeroc.Ice.Current;
 
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.file.*;
-import java.util.HashMap;
-import java.util.Properties;
+import java.util.*;
 
+import db.Connection;
+import entities.Chanson;
+import entities.StyleMusical;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.factory.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
@@ -25,6 +30,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     private String ip = "";
     private MediaPlayerFactory mediaPlayerFactory;
     private HashMap<String, MediaPlayer> mediaPlayerHashMap;
+    private String actualUploadedMusic = "";
     public SpotifyManagerImplement() {
         loadConfiguration();
         this.mediaPlayerFactory = new MediaPlayerFactory();
@@ -42,10 +48,15 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         }
     }
 
-    public void upload(byte[] bytes, String nameMusic, String styleMusic, com.zeroc.Ice.Current current) {
+
+    @Override
+    public void upload(byte[] bytes, String musicName, String styleMusic, Current current) {
+        String chemin = "";
         try {
-            System.out.println("uploading music new flow ... : " + nameMusic);
-            Path destinationPath = Paths.get((destination) + styleMusic , nameMusic);
+            System.out.println("uploading music new flow ... : " + musicName);
+            Path destinationPath = Paths.get((destination) + styleMusic ,
+                    musicName + ".mp3");
+            chemin = destinationPath.toString();
             Files.write(destinationPath, bytes, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             System.out.println("Flow uploaded");
         } catch (IOException e) {
@@ -53,58 +64,142 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         }
     }
 
+    private Document getDocument(StyleMusical styleMusical) {
+        Document styleMusicalDocument = new Document();
+        styleMusicalDocument.append("style", styleMusical.getStyle());
+        // Créer une liste de documents BSON pour les chansons
+        List<Document> chansonsDocuments = new ArrayList<>();
+        for (Chanson chanson : styleMusical.getChansons()) {
+            Document chansonDocument = new Document("titre", chanson.getTitre())
+                    .append("auteur", chanson.getAuteur())
+                    .append("annee", chanson.getAnnee())
+                    .append("chemin", chanson.getChemin());
+            chansonsDocuments.add(chansonDocument);
+        }
+        styleMusicalDocument.append("chansons", chansonsDocuments);
+        System.out.println("musique enregistrée avec succès");
+        return styleMusicalDocument;
+    }
+
+    @Override
+    public void persistMusic(Music music, String styleMusic, Current current) {
+    //enregister la chanson en base
+        System.out.println("Enregistrement de la musique " + music.titre + " dans le style " + styleMusic + " ...");
+        MongoDatabase database = Connection.connect();
+        MongoCollection<Document> collection = database.getCollection("chansons");
+        String style = styleMusic.toLowerCase(Locale.ROOT);
+        Bson filter = new Document("style", style);
+        StyleMusical styleMusical = collection.find(filter, StyleMusical.class).first();
+        if (styleMusical == null) {
+            styleMusical = new StyleMusical(style);
+        }
+        Chanson chanson = new Chanson(music.titre, music.auteur, music.annee, destination + styleMusic + "\\" + music.titre + ".mp3");
+        styleMusical.getChansons().add(chanson);
+        Document styleMusicalDocument = getDocument(styleMusical);
+        collection.findOneAndReplace(filter, styleMusicalDocument);
+        Connection.close();
+    }
+
     @Override
     public void deleteMusic(String nameMusic, String styleMusic, Current current) {
+        //go chercher le chemin de la musique dans la base
+        System.out.println("Suppression de la musique " + nameMusic + " ...");
+        String fullPath = "";
+        MongoDatabase database = Connection.connect();
+        MongoCollection<Document> collection = database.getCollection("chansons");
+        String style = styleMusic.toLowerCase(Locale.ROOT);
+        Bson filter = new Document("style", style);
+        StyleMusical styleMusical = collection.find(filter, StyleMusical.class).first();
+        if(styleMusical != null) {
+            List<Chanson> chansons = styleMusical.getChansons();
+            for (Chanson chanson : chansons) {
+                if (chanson.getTitre().equals(nameMusic)) {
+                    fullPath = chanson.getChemin();
+                    break;
+                }
+            }
+        }
         // Supprimer le fichier
         System.out.println("Suppression du fichier " + nameMusic + " dans le répertoire " + styleMusic + " ...");
-        Path path = Paths.get(destination, styleMusic, nameMusic);
+        Path path = Paths.get(fullPath);
         try {
             Files.delete(path);
             System.out.println("Fichier supprimé avec succès !");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // Supprimer la musique en base
+        System.out.println("Suppression de la musique " + nameMusic + " dans la base ...");
+        if (styleMusical != null) {
+            List<Chanson> chansons = styleMusical.getChansons();
+            for (Chanson chanson : chansons) {
+                if (chanson.getTitre().equals(nameMusic)) {
+                    chansons.remove(chanson);
+                    break;
+                }
+            }
+            Document styleMusicalDocument = getDocument(styleMusical);
+            collection.findOneAndReplace(filter, styleMusicalDocument);
+        }
+        System.out.println("Musique supprimée avec succès !");
+        Connection.close();
     }
 
     @Override
-    public void update(String nameMusic, String newNameMusic, String styleMusic, Current current) {
-        System.out.println("Renommage du fichier " + nameMusic + " en " + newNameMusic + " dans le répertoire " + styleMusic + " ...");
-        Path sourcePath = Paths.get(destination, styleMusic, nameMusic);
-        Path targetPath = Paths.get(destination, styleMusic, newNameMusic);
-        // Vérifier si le fichier cible existe déjà
-        if (Files.exists(targetPath)) {
-            System.err.println("Le fichier avec le nouveau nom existe déjà.");
-            // Gérer cette situation selon vos besoins (générer un nouveau nom, demander à l'utilisateur de fournir un nom différent, etc.)
-            return;
+    public void update(String musicName, String styleMusic, Music music, Current current) {
+        // Mettre à jour la musique en base
+        System.out.println("Mise à jour de la musique " + music.titre + " ...");
+        MongoDatabase database = Connection.connect();
+        MongoCollection<Document> collection = database.getCollection("chansons");
+        String style = styleMusic.toLowerCase(Locale.ROOT);
+        Bson filter = new Document("style", style);
+        StyleMusical styleMusical = collection.find(filter, StyleMusical.class).first();
+        if (styleMusical != null) {
+            List<Chanson> chansons = styleMusical.getChansons();
+            for (Chanson chanson : chansons) {
+                if (chanson.getTitre().equals(musicName)) {
+                    chanson.setTitre(music.titre);
+                    chanson.setAuteur(music.auteur);
+                    chanson.setAnnee(music.annee);
+                    break;
+                }
+            }
+            Document styleMusicalDocument = getDocument(styleMusical);
+            collection.findOneAndReplace(filter, styleMusicalDocument);
         }
-
-        // Vérifier si le fichier source existe
-        if (!Files.exists(sourcePath)) {
-            System.err.println("Le fichier source n'existe pas.");
-            // Gérer cette situation selon vos besoins
-            return;
-        }
-
-        try {
-            // Renommer le fichier
-            Files.move(sourcePath, targetPath);
-            System.out.println("Fichier renommé avec succès !");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println("Mise à jour effectuée avec succès !");
+        Connection.close();
     }
 
+
     @Override
-    public String[] getMusicByStyle(String styleMusic, Current current) {
-        //aller chercher les musiques dans le repertoire styleMusic
-        Path path = Paths.get(destination + styleMusic);
-        String[] list = null;
-        try {
-            list = Files.list(path).map(p -> p.getFileName().toString()).toArray(String[]::new);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Music[] getMusicByStyle(String styleMusic, Current current) {
+        System.out.println("Récupération des musiques du style " + styleMusic + " ...");
+       // recuperer la liste des musiques en base
+
+        MongoDatabase database = Connection.connect();
+        MongoCollection<Document> collection = database.getCollection("chansons");
+        String style = styleMusic.toLowerCase(Locale.ROOT);
+        Bson filter = new Document("style", style);
+        StyleMusical styleMusical = collection.find(filter, StyleMusical.class).first();
+        if(styleMusical == null || styleMusical.getChansons() == null) {
+            // Gérer le cas où la liste des chansons est null
+            System.out.println("Aucune chanson trouvée pour le style musical " + styleMusic);
+            Connection.close();
+            return new Music[0]; // Retourner un tableau vide
         }
-        return list;
+
+        int size = styleMusical.getChansons().size();
+        Music[] musics = new Music[size];
+        for (int i = 0; i < size; i++) {
+            Chanson chanson = styleMusical.getChansons().get(i);
+            String titre = chanson.getTitre();
+            String auteur = chanson.getAuteur();
+            int annee = chanson.getAnnee();
+            musics[i] = new Music(titre, auteur, annee);
+        }
+        Connection.close();
+        return musics;
     }
 
     @Override
@@ -112,7 +207,26 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         new NativeDiscovery().discover();
         String cleanMusicName = musicName.endsWith(".mp3") ?
                 musicName.substring(0, musicName.length() - 4) : musicName;
-        String fullPath = destination + musicStyle + "\\" + cleanMusicName + ".mp3";
+        //String fullPath = destination + musicStyle + "\\" + cleanMusicName + ".mp3";
+        String fullPath = "";
+        //go chercher le chemin de la musique dans la base
+        MongoDatabase database = Connection.connect();
+        MongoCollection<Document> collection = database.getCollection("chansons");
+        String style = musicStyle.toLowerCase(Locale.ROOT);
+        Bson filter = new Document("style", style);
+
+        StyleMusical styleMusical = collection.find(filter, StyleMusical.class).first();
+        if(styleMusical != null) {
+            List<Chanson> chansons = styleMusical.getChansons();
+            for (Chanson chanson : chansons) {
+                if (chanson.getTitre().equals(cleanMusicName)) {
+                    fullPath = chanson.getChemin();
+                    break;
+                }
+            }
+        }
+        Connection.close();
+        System.out.println("Lecture de la musique ... : " + fullPath);
         Path path = Paths.get(fullPath);
         MediaPlayer mediaPlayer = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
         try {

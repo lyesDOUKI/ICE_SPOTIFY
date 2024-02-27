@@ -5,7 +5,7 @@ const Ice = require("ice").Ice;
 const Spotify = require("../generated/Spotify").Spotify;
 
 
-async function traiterChanson(nomChanson, musicStyle) {
+async function traiterChanson(nomChanson, titre, auteur, annee, musicStyle) {
     let communicator;
     try {
         const fileData = traitementMP3.traitementMP3(nomChanson);
@@ -19,10 +19,12 @@ async function traiterChanson(nomChanson, musicStyle) {
             const buffer = Buffer.from(fileData);
             const chunkSize = 20480;
             const startTime = Date.now();
+            const music = new Spotify.Music(titre, auteur, annee);
             for (let i = 0; i < buffer.length; i += chunkSize) {
                 const sequence = buffer.slice(i, i + chunkSize);
-                await SpotifyManager.upload(sequence, nomChanson, musicStyle);
+                await SpotifyManager.upload(sequence, titre, musicStyle);
             }
+            await SpotifyManager.persistMusic(music, musicStyle);
             const uploadTime = (Date.now() - startTime) / 1000;
             console.log("Upload terminé.");
             console.log("Chanson uploadée en", uploadTime, "secondes.");

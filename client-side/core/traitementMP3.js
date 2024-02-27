@@ -8,6 +8,18 @@ function traitementMP3(nomChanson) {
     fileData = fs.readFileSync(filePath);
     return fileData;
 }
+function deleteAllFiles() {
+    fs.readdir(dataDirectory, (err, files) => {
+        if (err) throw err;
+        for (const file of files) {
+            fs.unlink(dataDirectory + file, err => {
+                if (err) throw err;
+            });
+        }
+    }
+    );
+}
+
 module.exports = {
-    traitementMP3
+    traitementMP3, deleteAllFiles
 };

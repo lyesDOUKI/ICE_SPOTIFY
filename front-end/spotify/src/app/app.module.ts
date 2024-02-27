@@ -12,13 +12,14 @@ import { UpdateMusicComponent } from './update-music/update-music.component';
 import { DisplayMusicsComponent } from './display-musics/display-musics.component';
 import { NavbarComponent } from './navbar/navbar.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
     UploadMusicComponent,
     UpdateMusicComponent,
     DisplayMusicsComponent,
-    NavbarComponent,
+    NavbarComponent
 
   ],
   imports: [

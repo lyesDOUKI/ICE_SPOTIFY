@@ -12,7 +12,9 @@ export class UploadMusicComponent {
   uploadedFileName: string | undefined;
   isLoading : boolean = false; // Variable pour afficher ou cacher le spinner
   selectedStyle: string = ''; // Variable pour stocker le style de musique sélectionné
-
+  titre : string = "";
+  auteur : string = "";
+  annee : string = "";
   constructor(private spotifyService:SpotifyCommService,
               private notificationService:NotificationService) { }
 
@@ -35,16 +37,21 @@ export class UploadMusicComponent {
     formData.append('file', file);
     // Ajouter le style de musique sélectionné
     formData.append('musicStyle', this.selectedStyle);
+    formData.append('titre', this.titre);
+    formData.append('auteur', this.auteur);
+    formData.append('annee', this.annee);
     this.spotifyService.uploadMusic(formData).subscribe(
       (response) => {
         if(response.status === 200) {
           this.deleteUploadedFile(); // Supprimer le fichier uploadé
           this.isLoading = false; // Cacher le spinner
           this.notificationService.showNotification('La chanson a été envoyée avec succès', 'success');
+
         }else {
           this.isLoading = false; // Cacher le spinner
           this.notificationService.showNotification('Erreur lors de l\'envoi de la chanson', 'danger');
         }
+        this.resetInput();
       }
     );
   }
@@ -52,5 +59,12 @@ export class UploadMusicComponent {
     const fileInput = document.getElementById('mp3file') as HTMLInputElement;
     fileInput.files = null; // Supprimer le fichier sélectionné
     this.uploadedFileName = undefined; // Supprimer le nom du fichier uploadé
+  }
+  resetInput()
+  {
+    this.titre = "";
+    this.auteur = "";
+    this.annee = "";
+    this.selectedStyle = "";
   }
 }

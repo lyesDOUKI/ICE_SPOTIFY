@@ -5,6 +5,20 @@
     Le fichier {{ uploadedFileName }} a bien été ajouté.
     <span class="delete-icon" (click)="deleteUploadedFile()">&times;</span>
   </div>
+
+  <!-- Ajout des champs titre, auteur et année -->
+  <div class="input-container">
+    <input type="text" class="form-control" id="titre" name="titre" [(ngModel)]="titre"
+     placeholder="Titre de la chanson">
+     <input type="text" class="form-control ms-3" id="auteur" name="auteur"
+     [(ngModel)]="auteur" placeholder="Auteur de la chanson">
+  </div>
+  <div class="input-container">
+    <input type="text" class="form-control" id="annee" name="annee" [(ngModel)]="annee" placeholder="Année de sortie">
+  </div>
+
+
+  <!-- Sélection du style musical -->
   <div class="mt-3">
     <select class="genre-select" id="musicStyle" name="musicStyle" [(ngModel)]="selectedStyle">
       <option value="" disabled selected>Choisissez le style</option>
@@ -15,6 +29,7 @@
     </select>
   </div>
 
+  <!-- Bouton de soumission du formulaire -->
   <button class="upload-btn mt-3" type="button" (click)="submitForm()" [disabled]="isLoading">
     <span *ngIf="!isLoading">Valider</span>
     <div *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status">

@@ -8,3 +8,11 @@ body {
   background-position: center;
   background-attachment: fixed; /* Fixe l'image de fond lors du défilement */
 }
+@media screen and (max-width: 768px) {
+  body {
+    /* Ajustement de la taille de la police et d'autres styles pour une meilleure lisibilité sur les appareils mobiles */
+    font-size: 14px;
+    /* Réduire la taille de l'image de fond pour s'adapter aux petits écrans */
+    background-size: 100% 100%;
+  }
+}

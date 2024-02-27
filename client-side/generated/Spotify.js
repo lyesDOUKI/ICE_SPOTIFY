@@ -26,7 +26,38 @@
 
     Slice.defineSequence(Spotify, "dataHelper", "Ice.ByteHelper", true);
 
-    Slice.defineSequence(Spotify, "listOfMusicByStyleHelper", "Ice.StringHelper", false);
+    Spotify.Music = class
+    {
+        constructor(titre = "", auteur = "", annee = 0)
+        {
+            this.titre = titre;
+            this.auteur = auteur;
+            this.annee = annee;
+        }
+
+        _write(ostr)
+        {
+            ostr.writeString(this.titre);
+            ostr.writeString(this.auteur);
+            ostr.writeInt(this.annee);
+        }
+
+        _read(istr)
+        {
+            this.titre = istr.readString();
+            this.auteur = istr.readString();
+            this.annee = istr.readInt();
+        }
+
+        static get minWireSize()
+        {
+            return  6;
+        }
+    };
+
+    Slice.defineStruct(Spotify.Music, true, true);
+
+    Slice.defineSequence(Spotify, "listOfMusicByStyleHelper", "Spotify.Music", false);
 
     const iceC_Spotify_SpotifyManager_ids = [
         "::Ice::Object",
@@ -44,8 +75,9 @@
     Slice.defineOperations(Spotify.SpotifyManager, Spotify.SpotifyManagerPrx, iceC_Spotify_SpotifyManager_ids, 1,
     {
         "upload": [, , , , , [["Spotify.dataHelper"], [7], [7]], , , , ],
+        "persistMusic": [, , , , , [[Spotify.Music], [7]], , , , ],
         "deleteMusic": [, , , , , [[7], [7]], , , , ],
-        "update": [, , , , , [[7], [7], [7]], , , , ],
+        "update": [, , , , , [[7], [7], [Spotify.Music]], , , , ],
         "getMusicByStyle": [, , , , ["Spotify.listOfMusicByStyleHelper"], [[7]], , , , ],
         "lireLaMusique": [, , , , [7], [[7], [7]], , , , ],
         "stopMusique": [, , , , [3], [[7]], , , , ]

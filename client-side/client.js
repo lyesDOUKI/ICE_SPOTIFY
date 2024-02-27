@@ -53,13 +53,18 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+const core = require('./core/traitementMP3');
 // Gérer l'upload de fichiers
 app.post('/upload', upload.single('file'), async (req, res) => {
     const nomChanson = req.file.originalname;
     const musicStyle = req.body.musicStyle;
+    const titre = req.body.titre;
+    const auteur = req.body.auteur;
+    const annee = req.body.annee;
     console.log("style de musique: ", musicStyle);
     try {
-        await traiterChanson(nomChanson, musicStyle);
+        await traiterChanson(nomChanson, titre, auteur, annee, musicStyle);
+        core.deleteAllFiles();
         res.status(200).json({ message: 'Fichier reçu avec succès', status : 200 }); // Renvoyer une réponse JSON
     } catch (error) {
         console.error(error);
@@ -77,13 +82,14 @@ app.get('/musics/:style', async (req, res) => {
 //update le nom de la chanson 
 app.put('/music', (req, res) => {
     const oldName = req.body.oldName;
-    const newName = req.body.newName;
+    const titre = req.body.titre;
+    const auteur = req.body.auteur;
+    const annee = req.body.annee;
     const style = req.body.style;
     console.log("oldName: ", oldName);
-    console.log("newName: ", newName);
     console.log("style: ", style);
     try {
-        updateMusic(oldName, newName, style);
+        updateMusic(oldName, titre, auteur, annee, style);
         res.status(200).json({ message: 'Fichier modifié avec succès', status : 200 }); // Renvoyer une réponse JSON
     } catch (error) {
         console.error(error);

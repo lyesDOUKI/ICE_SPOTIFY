@@ -16,8 +16,9 @@ export class SpotifyCommService {
   loadMusicsByStyle(style: string) {
     return this.http.get<any[]>(this.baseUrl+"/musics/"+style);
   }
-  updateMusicName(oldName: string, newName: string, style: string) {
-    return this.http.put<any>(this.baseUrl+"/music", {oldName, newName, style});
+  updateMusic(oldName: string, titre: string,
+    auteur : string, annee : number, style: string) {
+    return this.http.put<any>(this.baseUrl+"/music", {oldName, titre, auteur, annee, style});
   }
   deleteMusic(music: string, style: string) {
     return this.http.delete<any>(this.baseUrl+"/music/"+music+"/"+style);

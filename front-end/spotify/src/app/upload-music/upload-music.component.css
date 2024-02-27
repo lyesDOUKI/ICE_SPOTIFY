@@ -81,3 +81,23 @@ max-width: 200px; /* Réduction de la largeur maximale */
   color: red;
   font-size: 20px;
 }
+.input-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.input-container input {
+  padding: 10px;
+  background-color: rgba(240, 240, 240, 0.7);
+  color: #333;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.input-container input:hover {
+  background-color: rgba(221, 221, 221, 0.7);
+}
