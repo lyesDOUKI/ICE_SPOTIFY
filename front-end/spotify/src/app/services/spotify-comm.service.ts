@@ -29,4 +29,7 @@ export class SpotifyCommService {
   stopMusic(audioUrl: string) {
     return this.http.post<any>(this.baseUrl+"/stop", {audioUrl});
   }
+  getMusicByChoix(choix: string, search: string) {
+    return this.http.get<any[]>(this.baseUrl+"/search/"+choix+"/"+search);
+  }
 }

@@ -4,6 +4,7 @@ const path = require('path');
 const http = require('http')
 const traiterChanson = require('./ice/ice-upload');
 const loadMusicsByStyle = require('./ice/ice-loadMusics');
+const loadMusicsByQuey = require('./ice/ice-loadMusicByQuery');
 const updateMusic = require('./ice/ice-updateMusic');
 const deleteMusic = require('./ice/ice-deleteMusic');
 const readMusic = require('./ice/ice-readMusic');
@@ -122,6 +123,15 @@ app.post('/stop', async (req, res) => {
     console.log("stop music on url : ", urlToStop);
     const result = await stopMusic(urlToStop);
     return res.status(200).json({statut : result});
+});
+app.get('/search/:chose/:query', async (req, res) => {
+    const choix = req.params.chose;
+    const query = req.params.query;
+    console.log("choix: ", choix);
+    console.log("query: ", query);
+    const musics = await loadMusicsByQuey(choix, query);
+    console.log("musics: ", musics);
+    res.status(200).json(musics);
 });
 io.on('connection', (socket) => {
     console.log('Un client s\'est connecté');

@@ -9,6 +9,8 @@ import { SpotifyCommService } from '../services/spotify-comm.service';
 export class NavbarComponent {
   selectedStyle: string = ''; // Variable pour stocker le style sélectionné
   isLoading: boolean = false;
+  searchOption : string = "";
+  searchQuery:string = "";
   constructor(private appComponent: AppComponent, private spotifyService : SpotifyCommService) { }
 
   toggleStyle(event: any, style: string) {
@@ -39,5 +41,16 @@ export class NavbarComponent {
     }));
     this.appComponent.showDisplayMusicComponent();
 
+  }
+  toggleSearchOption(choix:string)
+  {
+    this.searchOption = choix;
+  }
+  search()
+  {
+    this.spotifyService.getMusicByChoix(this.searchOption, this.searchQuery).subscribe((res)=>{
+      this.appComponent.setMusicList(res);
+      this.appComponent.showDisplayMusicComponent();
+    });
   }
 }

@@ -79,6 +79,7 @@
         "deleteMusic": [, , , , , [[7], [7]], , , , ],
         "update": [, , , , , [[7], [7], [Spotify.Music]], , , , ],
         "getMusicByStyle": [, , , , ["Spotify.listOfMusicByStyleHelper"], [[7]], , , , ],
+        "getMusicByQuery": [, , , , ["Spotify.listOfMusicByStyleHelper"], [[7], [7]], , , , ],
         "lireLaMusique": [, , , , [7], [[7], [7]], , , , ],
         "stopMusique": [, , , , [3], [[7]], , , , ]
     });

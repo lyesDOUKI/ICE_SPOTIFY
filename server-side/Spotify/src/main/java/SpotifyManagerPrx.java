@@ -213,6 +213,48 @@ public interface SpotifyManagerPrx extends com.zeroc.Ice.ObjectPrx
         return f;
     }
 
+    default Music[] getMusicByQuery(String choix, String query)
+    {
+        return getMusicByQuery(choix, query, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default Music[] getMusicByQuery(String choix, String query, java.util.Map<String, String> context)
+    {
+        return _iceI_getMusicByQueryAsync(choix, query, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<Music[]> getMusicByQueryAsync(String choix, String query)
+    {
+        return _iceI_getMusicByQueryAsync(choix, query, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<Music[]> getMusicByQueryAsync(String choix, String query, java.util.Map<String, String> context)
+    {
+        return _iceI_getMusicByQueryAsync(choix, query, context, false);
+    }
+
+    /**
+     * @hidden
+     * @param iceP_choix -
+     * @param iceP_query -
+     * @param context -
+     * @param sync -
+     * @return -
+     **/
+    default com.zeroc.IceInternal.OutgoingAsync<Music[]> _iceI_getMusicByQueryAsync(String iceP_choix, String iceP_query, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<Music[]> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "getMusicByQuery", null, sync, null);
+        f.invoke(true, context, null, ostr -> {
+                     ostr.writeString(iceP_choix);
+                     ostr.writeString(iceP_query);
+                 }, istr -> {
+                     Music[] ret;
+                     ret = listOfMusicByStyleHelper.read(istr);
+                     return ret;
+                 });
+        return f;
+    }
+
     default String lireLaMusique(String musicName, String musicStyle)
     {
         return lireLaMusique(musicName, musicStyle, com.zeroc.Ice.ObjectPrx.noExplicitContext);

@@ -2,7 +2,10 @@ package iceimplements;
 
 import Spotify.Music;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import com.zeroc.Ice.Current;
 
 
@@ -201,6 +204,49 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         Connection.close();
         return musics;
     }
+
+    @Override
+    public Music[] getMusicByQuery(String choix, String query, Current current) {
+        System.out.println("Récupération des musiques du query " + query + " ...");
+        // Connecter à la base de données MongoDB
+        MongoDatabase database = Connection.connect();
+        MongoCollection<Document> collection = database.getCollection("chansons");
+        System.out.println("query : " + query);
+        System.out.println("choix : " + choix);
+        Bson filter = Filters.regex("chansons."+choix, ".*" + query + ".*", "i");
+
+        // Exécutez la requête en utilisant le filtre
+        List<StyleMusical> styleMusicals = collection.aggregate(Arrays.asList(
+                Aggregates.unwind("$chansons"),
+                Aggregates.match(filter)
+        )).map(document -> {
+
+            StyleMusical styleMusical = new StyleMusical();
+
+            styleMusical.setStyle(document.getString("style"));
+
+            Document chansonDoc = document.get("chansons", Document.class);
+            Chanson chanson = new Chanson();
+            chanson.setTitre(chansonDoc.getString("titre"));
+            chanson.setAuteur(chansonDoc.getString("auteur"));
+            chanson.setAnnee(chansonDoc.getInteger("annee"));
+            styleMusical.getChansons().add(chanson);
+
+            return styleMusical;
+        }).into(new ArrayList<>());
+
+        List<Music> musicsList = new ArrayList<>();
+        for (StyleMusical styleMusical : styleMusicals) {
+            for (Chanson chanson : styleMusical.getChansons()) {
+                musicsList.add(new Music(chanson.getTitre(), chanson.getAuteur(), chanson.getAnnee()));
+            }
+        }
+
+        Music[] musics = musicsList.toArray(new Music[0]);
+        Connection.close();
+        return musics;
+    }
+
 
     @Override
     public String lireLaMusique(String musicName, String musicStyle, Current current) {

@@ -27,9 +27,12 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
     void deleteMusic(String nameMusic, String styleMusic, com.zeroc.Ice.Current current);
 
 
+
     void update(String musicName, String styleMusic, Spotify.Music music, Current current);
 
     Spotify.Music[] getMusicByStyle(String styleMusic, Current current);
+
+    Spotify.Music[] getMusicByQuery(String choix, String query, Current current);
 
     String lireLaMusique(String musicName, String musicStyle, com.zeroc.Ice.Current current);
 
@@ -171,6 +174,29 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
      * @param current -
      * @return -
     **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_getMusicByQuery(SpotifyManager obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        String iceP_choix;
+        String iceP_query;
+        iceP_choix = istr.readString();
+        iceP_query = istr.readString();
+        inS.endReadParams();
+        Music[] ret = obj.getMusicByQuery(iceP_choix, iceP_query, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        listOfMusicByStyleHelper.write(ostr, ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
     static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_lireLaMusique(SpotifyManager obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
     {
         com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
@@ -212,6 +238,7 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
     final static String[] _iceOps =
     {
         "deleteMusic",
+        "getMusicByQuery",
         "getMusicByStyle",
         "ice_id",
         "ice_ids",
@@ -243,41 +270,45 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
             }
             case 1:
             {
-                return _iceD_getMusicByStyle(this, in, current);
+                return _iceD_getMusicByQuery(this, in, current);
             }
             case 2:
             {
-                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
+                return _iceD_getMusicByStyle(this, in, current);
             }
             case 3:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
             }
             case 4:
             {
-                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
             }
             case 5:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
             }
             case 6:
             {
-                return _iceD_lireLaMusique(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
             }
             case 7:
             {
-                return _iceD_persistMusic(this, in, current);
+                return _iceD_lireLaMusique(this, in, current);
             }
             case 8:
             {
-                return _iceD_stopMusique(this, in, current);
+                return _iceD_persistMusic(this, in, current);
             }
             case 9:
             {
-                return _iceD_update(this, in, current);
+                return _iceD_stopMusique(this, in, current);
             }
             case 10:
+            {
+                return _iceD_update(this, in, current);
+            }
+            case 11:
             {
                 return _iceD_upload(this, in, current);
             }

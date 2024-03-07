@@ -13,7 +13,9 @@ public class StyleMusical {
     @BsonProperty("chansons")
     private List<Chanson> chansons;
 
-    public StyleMusical() {}
+    public StyleMusical() {
+        this.chansons = new ArrayList<>();
+    }
 
     public StyleMusical(String style) {
         this.style = style;
