@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
+import { environment } from 'src/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class SpotifyCommService {
 
-  private readonly baseUrl = 'http://172.20.10.12:3000'; // URL de base
+  private readonly baseUrl = environment.apiUrl; // URL de base
 
   constructor(private http: HttpClient) { }
 
