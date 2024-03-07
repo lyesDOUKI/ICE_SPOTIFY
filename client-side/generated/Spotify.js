@@ -28,10 +28,11 @@
 
     Spotify.Music = class
     {
-        constructor(titre = "", auteur = "", annee = 0)
+        constructor(titre = "", auteur = "", style = "", annee = "")
         {
             this.titre = titre;
             this.auteur = auteur;
+            this.style = style;
             this.annee = annee;
         }
 
@@ -39,19 +40,21 @@
         {
             ostr.writeString(this.titre);
             ostr.writeString(this.auteur);
-            ostr.writeInt(this.annee);
+            ostr.writeString(this.style);
+            ostr.writeString(this.annee);
         }
 
         _read(istr)
         {
             this.titre = istr.readString();
             this.auteur = istr.readString();
-            this.annee = istr.readInt();
+            this.style = istr.readString();
+            this.annee = istr.readString();
         }
 
         static get minWireSize()
         {
-            return  6;
+            return  4;
         }
     };
 

@@ -88,7 +88,9 @@ app.put('/music', (req, res) => {
     const annee = req.body.annee;
     const style = req.body.style;
     console.log("oldName: ", oldName);
+    console.log("titre: ", titre);
     console.log("style: ", style);
+    console.log("annee: ", annee);
     try {
         updateMusic(oldName, titre, auteur, annee, style);
         res.status(200).json({ message: 'Fichier modifié avec succès', status : 200 }); // Renvoyer une réponse JSON

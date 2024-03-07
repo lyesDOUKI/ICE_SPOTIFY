@@ -32,6 +32,7 @@ export class NavbarComponent {
 
   searchMusic() {
     this.isLoading = true;
+    this.appComponent.isFromSearchComponent(false);
     this.spotifyService.loadMusicsByStyle(this.selectedStyle).subscribe((response=>{
       if(response){
         this.appComponent.setStyleMusic(this.selectedStyle);
@@ -48,8 +49,12 @@ export class NavbarComponent {
   }
   search()
   {
+    this.spotifyService.setChoixSearch(this.searchOption);
+    this.spotifyService.setQuerySearch(this.searchQuery);
+    this.appComponent.isFromSearchComponent(true);
     this.spotifyService.getMusicByChoix(this.searchOption, this.searchQuery).subscribe((res)=>{
       this.appComponent.setMusicList(res);
+      this.appComponent.setStyleMusic(res[0].style);
       this.appComponent.showDisplayMusicComponent();
     });
   }

@@ -2,7 +2,6 @@ package iceimplements;
 
 import Spotify.Music;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
@@ -75,6 +74,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         for (Chanson chanson : styleMusical.getChansons()) {
             Document chansonDocument = new Document("titre", chanson.getTitre())
                     .append("auteur", chanson.getAuteur())
+                    .append("style", chanson.getStyle())
                     .append("annee", chanson.getAnnee())
                     .append("chemin", chanson.getChemin());
             chansonsDocuments.add(chansonDocument);
@@ -96,7 +96,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         if (styleMusical == null) {
             styleMusical = new StyleMusical(style);
         }
-        Chanson chanson = new Chanson(music.titre, music.auteur, music.annee, destination + styleMusic + "\\" + music.titre + ".mp3");
+        Chanson chanson = new Chanson(music.titre, music.auteur, styleMusic, music.annee, destination + styleMusic + "\\" + music.titre + ".mp3");
         styleMusical.getChansons().add(chanson);
         Document styleMusicalDocument = getDocument(styleMusical);
         collection.findOneAndReplace(filter, styleMusicalDocument);
@@ -163,6 +163,7 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
                 if (chanson.getTitre().equals(musicName)) {
                     chanson.setTitre(music.titre);
                     chanson.setAuteur(music.auteur);
+                    System.out.println("l 'annee : " + music.annee);
                     chanson.setAnnee(music.annee);
                     break;
                 }
@@ -198,8 +199,9 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
             Chanson chanson = styleMusical.getChansons().get(i);
             String titre = chanson.getTitre();
             String auteur = chanson.getAuteur();
-            int annee = chanson.getAnnee();
-            musics[i] = new Music(titre, auteur, annee);
+            String styleMus = chanson.getStyle();
+            String annee = chanson.getAnnee();
+            musics[i] = new Music(titre, auteur, styleMus, annee);
         }
         Connection.close();
         return musics;
@@ -229,7 +231,8 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
             Chanson chanson = new Chanson();
             chanson.setTitre(chansonDoc.getString("titre"));
             chanson.setAuteur(chansonDoc.getString("auteur"));
-            chanson.setAnnee(chansonDoc.getInteger("annee"));
+            chanson.setAnnee(chansonDoc.getString("annee"));
+            chanson.setStyle(chansonDoc.getString("style"));
             styleMusical.getChansons().add(chanson);
 
             return styleMusical;
@@ -238,7 +241,9 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
         List<Music> musicsList = new ArrayList<>();
         for (StyleMusical styleMusical : styleMusicals) {
             for (Chanson chanson : styleMusical.getChansons()) {
-                musicsList.add(new Music(chanson.getTitre(), chanson.getAuteur(), chanson.getAnnee()));
+                musicsList.add(new Music(chanson.getTitre(), chanson.getAuteur(),
+                        chanson.getStyle(),
+                        chanson.getAnnee()));
             }
         }
 

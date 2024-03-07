@@ -13,7 +13,8 @@ import { NotificationService } from '../services/notifications.service';
 export class DisplayMusicsComponent {
   currentPlayingMusic: string | null = null;
   @Input() musicList: any[] = []; // Liste des musiques à afficher
-  @Input() styleMusic = ''; // Style de musique à afficher
+  @Input() styleMusic = '';
+  @Input() isFromSearch!: boolean;
   isLoading: boolean = false;
   showModal: boolean = false;
   newTitle: string = '';
@@ -51,12 +52,17 @@ export class DisplayMusicsComponent {
       this.newTitle, this.newAuthor, this.newYear, this.styleMusic).subscribe((response=>{
       if(response.status === 200){
         this.closeModal();
-        this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe((response=>{
-          if(response){
-            this.musicList = response;
-            this.notification.showNotification("Musique modifiée avec succès", "success");
-          }
-        }));
+       if(this.isFromSearch)
+        {
+          this.updateBySearch();
+        }else{
+          this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe((response=>{
+            if(response){
+              this.musicList = response;
+              this.notification.showNotification("Musique modifiée avec succès", "success");
+            }
+          }));
+        }
       }else{
         this.notification.showNotification("Echec de la modification de la musique", "danger");
       }
@@ -72,12 +78,18 @@ export class DisplayMusicsComponent {
     this.isLoading = true;
     this.spotifyService.deleteMusic(music, this.styleMusic).subscribe((Response=>{
       if(Response.status === 200){
-        this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe((response=>{
-          if(response){
-            this.musicList = response;
-            this.notification.showNotification("Musique supprimée avec succès", "success");
-          }
-        }));
+        if(this.isFromSearch)
+        {
+          this.updateBySearch();
+        }else{
+          this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe((response=>{
+            if(response){
+              this.musicList = response;
+              this.notification.showNotification("Musique supprimée avec succès", "success");
+            }
+          }));
+        }
+
     }else{
       this.notification.showNotification("Echec de la suppression de la musique", "danger");
     }
@@ -210,5 +222,14 @@ export class DisplayMusicsComponent {
     if (targetElement.classList.contains('modal') || !modal.contains(targetElement)) {
       this.showModal = false; // Fermer le modal
     }
+  }
+  updateBySearch()
+  {
+    this.spotifyService.getMusicByChoix(this.spotifyService.getChoixSearch(), this.spotifyService.getQuerySearch()).subscribe((res)=>{
+      if(res){
+        this.musicList = res;
+        this.notification.showNotification("Musique modifiée avec succès", "success");
+      }
+    });
   }
 }

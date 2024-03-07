@@ -7,7 +7,8 @@ import { environment } from 'src/environment';
 export class SpotifyCommService {
 
   private readonly baseUrl = environment.apiUrl; // URL de base
-
+  choixSearch : string = "";
+  querySearch : string = "";
   constructor(private http: HttpClient) { }
 
   uploadMusic(formData: FormData) {
@@ -31,5 +32,21 @@ export class SpotifyCommService {
   }
   getMusicByChoix(choix: string, search: string) {
     return this.http.get<any[]>(this.baseUrl+"/search/"+choix+"/"+search);
+  }
+  setChoixSearch(choix: string)
+  {
+    this.choixSearch = choix;
+  }
+  setQuerySearch(query: string)
+  {
+    this.querySearch = query;
+  }
+  getChoixSearch()
+  {
+    return this.choixSearch;
+  }
+  getQuerySearch()
+  {
+    return this.querySearch;
   }
 }

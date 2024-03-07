@@ -12,7 +12,7 @@ async function updateMusic(oldName, titre, auteur, annee, musicStyle) {
         const SpotifyManager = await Spotify.SpotifyManagerPrx.checkedCast(base);
         if(SpotifyManager) {
             console.log("Je récupère SpotifyManager");
-            const music = new Spotify.Music(titre, auteur, annee);
+            const music = new Spotify.Music(titre, auteur, musicStyle, annee);
             await SpotifyManager.update(oldName,musicStyle, music );
         } else {
             console.log("Proxy invalide");

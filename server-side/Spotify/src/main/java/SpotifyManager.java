@@ -26,8 +26,6 @@ public interface SpotifyManager extends com.zeroc.Ice.Object
 
     void deleteMusic(String nameMusic, String styleMusic, com.zeroc.Ice.Current current);
 
-
-
     void update(String musicName, String styleMusic, Spotify.Music music, Current current);
 
     Spotify.Music[] getMusicByStyle(String styleMusic, Current current);

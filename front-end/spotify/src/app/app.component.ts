@@ -8,7 +8,7 @@ import { io } from 'socket.io-client';
 })
 export class AppComponent{
   showDisplayMusics: boolean = false; // Variable pour contrôler l'affichage du composant app-display-musics
-
+  isFromSearch: boolean = false; // Variable pour contrôler l'affichage du composant app-display-musics
   audioUrl : string = ''; // URL de la musique à lire
   //list of music, à passer en input du composant app-display-musics
   musicList: any[] = [
@@ -33,5 +33,8 @@ export class AppComponent{
   }
   setStyleMusic(styleMusic: string) {
     this.styleMusic = styleMusic;
+  }
+  isFromSearchComponent(isFromSearch: boolean) {
+    this.isFromSearch = isFromSearch;
   }
 }

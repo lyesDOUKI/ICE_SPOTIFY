@@ -39,7 +39,7 @@ public final class listOfMusicByStyleHelper
     public static Music[] read(com.zeroc.Ice.InputStream istr)
     {
         final Music[] v;
-        final int len0 = istr.readAndCheckSeqSize(6);
+        final int len0 = istr.readAndCheckSeqSize(4);
         v = new Music[len0];
         for(int i0 = 0; i0 < len0; i0++)
         {

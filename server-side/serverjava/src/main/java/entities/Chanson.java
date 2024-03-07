@@ -9,8 +9,10 @@ public class Chanson {
     @BsonProperty("auteur")
     private String auteur;
 
+    @BsonProperty("style")
+    private String style;
     @BsonProperty("annee")
-    private int annee;
+    private String annee;
 
     @BsonProperty("chemin")
     private String chemin;
@@ -18,11 +20,19 @@ public class Chanson {
     // Constructeur
     public Chanson() {
     }
-    public Chanson(String titre, String auteur, int annee, String chemin) {
+    public Chanson(String titre, String auteur,
+                   String style, String annee, String chemin) {
         this.titre = titre;
         this.auteur = auteur;
+        this.style = style;
         this.annee = annee;
         this.chemin = chemin;
+    }
+    public Chanson(String titre, String auteur, String style, String annee) {
+        this.titre = titre;
+        this.auteur = auteur;
+        this.style = style;
+        this.annee = annee;
     }
 
     public String getTitre() {
@@ -41,11 +51,11 @@ public class Chanson {
         this.auteur = auteur;
     }
 
-    public int getAnnee() {
+    public String getAnnee() {
         return annee;
     }
 
-    public void setAnnee(int annee) {
+    public void setAnnee(String annee) {
         this.annee = annee;
     }
 
@@ -57,6 +67,13 @@ public class Chanson {
         this.chemin = chemin;
     }
 
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
     // Méthode toString (pour l'affichage)
     @Override
     public String toString() {

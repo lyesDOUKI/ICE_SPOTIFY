@@ -22,18 +22,23 @@ public class Music implements java.lang.Cloneable,
 
     public String auteur;
 
-    public int annee;
+    public String style;
+
+    public String annee;
 
     public Music()
     {
         this.titre = "";
         this.auteur = "";
+        this.style = "";
+        this.annee = "";
     }
 
-    public Music(String titre, String auteur, int annee)
+    public Music(String titre, String auteur, String style, String annee)
     {
         this.titre = titre;
         this.auteur = auteur;
+        this.style = style;
         this.annee = annee;
     }
 
@@ -65,9 +70,19 @@ public class Music implements java.lang.Cloneable,
                     return false;
                 }
             }
+            if(this.style != r.style)
+            {
+                if(this.style == null || r.style == null || !this.style.equals(r.style))
+                {
+                    return false;
+                }
+            }
             if(this.annee != r.annee)
             {
-                return false;
+                if(this.annee == null || r.annee == null || !this.annee.equals(r.annee))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -82,6 +97,7 @@ public class Music implements java.lang.Cloneable,
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, "::Spotify::Music");
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, titre);
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, auteur);
+        h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, style);
         h_ = com.zeroc.IceInternal.HashUtil.hashAdd(h_, annee);
         return h_;
     }
@@ -104,14 +120,16 @@ public class Music implements java.lang.Cloneable,
     {
         ostr.writeString(this.titre);
         ostr.writeString(this.auteur);
-        ostr.writeInt(this.annee);
+        ostr.writeString(this.style);
+        ostr.writeString(this.annee);
     }
 
     public void ice_readMembers(com.zeroc.Ice.InputStream istr)
     {
         this.titre = istr.readString();
         this.auteur = istr.readString();
-        this.annee = istr.readInt();
+        this.style = istr.readString();
+        this.annee = istr.readString();
     }
 
     static public void ice_write(com.zeroc.Ice.OutputStream ostr, Music v)
@@ -167,5 +185,5 @@ public class Music implements java.lang.Cloneable,
     private static final Music _nullMarshalValue = new Music();
 
     /** @hidden */
-    public static final long serialVersionUID = -1511552194L;
+    public static final long serialVersionUID = -427826834L;
 }

@@ -3,7 +3,8 @@ module Spotify {
     struct Music {
         string titre;
         string auteur;
-        int annee;
+        string style;
+        string annee;
     };
     sequence<Music> listOfMusicByStyle;
     interface SpotifyManager {
