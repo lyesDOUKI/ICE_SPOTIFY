@@ -2,3 +2,4 @@
 *.mp3
 #enlever le repertoire node_modules
 node_modules/
+security/*

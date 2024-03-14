@@ -1,4 +1,3 @@
-
 const Ice = require("ice").Ice;
 const Spotify = require("../generated/Spotify").Spotify;
 

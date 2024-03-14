@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const http = require('http')
+const fs = require("fs");
 const traiterChanson = require('./ice/ice-upload');
 const loadMusicsByStyle = require('./ice/ice-loadMusics');
 const loadMusicsByQuey = require('./ice/ice-loadMusicByQuery');
@@ -11,7 +12,13 @@ const readMusic = require('./ice/ice-readMusic');
 const stopMusic = require('./ice/ice-stopMusic');
 const { Server } = require("socket.io");
 const cors = require('cors');
+const https = require("https");
+const options = {
+    key: fs.readFileSync("./security/keyNode.key"),
+    cert: fs.readFileSync("./security/certificatNode.crt"),
+};
 const app = express();
+const httpApp = https.createServer(options, app);
 const PORT = 3000;
 const server = http.createServer(app);
 app.use(express.json());
@@ -139,6 +146,6 @@ io.on('connection', (socket) => {
     console.log('Un client s\'est connecté');
 });
 
-server.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+httpApp.listen(PORT, () => {
+    console.log("Le serveur est lancé sur le port : ", PORT);
 });

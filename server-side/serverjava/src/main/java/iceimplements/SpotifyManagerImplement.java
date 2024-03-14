@@ -33,11 +33,15 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     private MediaPlayerFactory mediaPlayerFactory;
     private HashMap<String, MediaPlayer> mediaPlayerHashMap;
     private String actualUploadedMusic = "";
+    private String property;
     public SpotifyManagerImplement() {
         loadConfiguration();
         this.mediaPlayerFactory = new MediaPlayerFactory();
         this.mediaPlayerHashMap = new HashMap<>();
+        this.property = "";
+
     }
+
 
     private void loadConfiguration() {
         try {
