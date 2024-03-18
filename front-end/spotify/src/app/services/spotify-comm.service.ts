@@ -27,8 +27,8 @@ export class SpotifyCommService {
   lireMusic(music: string, style: string) {
     return this.http.get<any>(this.baseUrl+"/ecouter/"+music+"/"+style);
   }
-  stopMusic(audioUrl: string) {
-    return this.http.post<any>(this.baseUrl+"/stop", {audioUrl});
+  stopMusic(audioUrl: string, style: string | null) {
+    return this.http.post<any>(this.baseUrl+"/stop", {audioUrl, style});
   }
   getMusicByChoix(choix: string, search: string) {
     return this.http.get<any[]>(this.baseUrl+"/search/"+choix+"/"+search);

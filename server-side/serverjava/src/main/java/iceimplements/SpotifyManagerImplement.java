@@ -34,11 +34,11 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
     private HashMap<String, MediaPlayer> mediaPlayerHashMap;
     private String actualUploadedMusic = "";
     private String property;
-    public SpotifyManagerImplement() {
+    public SpotifyManagerImplement(String property) {
         loadConfiguration();
         this.mediaPlayerFactory = new MediaPlayerFactory();
         this.mediaPlayerHashMap = new HashMap<>();
-        this.property = "";
+        this.property = property;
 
     }
 
@@ -311,7 +311,19 @@ public class SpotifyManagerImplement implements Spotify.SpotifyManager {
             mediaPlayerHashMap.remove(urlDeDiffusion);
             result = 1;
         }else {
-            System.out.println("Aucun media player trouvé dans la hashmap ...");
+            //voir si une chanson est en cours sur cette url
+            //accéder au stream vlc
+            MediaPlayer mediaPlayer1 = mediaPlayerFactory.mediaPlayers().newMediaPlayer();
+            try {
+                mediaPlayer1.media().play(urlDeDiffusion);
+                if (mediaPlayer1.status().isPlaying()) {
+                    mediaPlayer1.controls().stop();
+                    mediaPlayer1.release();
+                    result = 1;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }

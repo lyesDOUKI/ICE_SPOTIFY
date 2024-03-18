@@ -8,7 +8,7 @@ async function loadMusicsByQuery(choix, query) {
     try {
         
         communicator = Ice.initialize();
-        const base = communicator.stringToProxy("SpotifyAdapter:default -p 10000");
+        const base = communicator.stringToProxy("spotify-0:default -p 10000");
         const SpotifyManager = await Spotify.SpotifyManagerPrx.checkedCast(base);
         if(SpotifyManager) {
             console.log("Je récupère SpotifyManager");

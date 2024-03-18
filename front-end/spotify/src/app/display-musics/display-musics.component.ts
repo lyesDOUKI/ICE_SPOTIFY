@@ -12,6 +12,7 @@ import { NotificationService } from '../services/notifications.service';
 })
 export class DisplayMusicsComponent {
   currentPlayingMusic: string | null = null;
+  currentPlayingMusicStyle: string | null = null;
   @Input() musicList: any[] = []; // Liste des musiques à afficher
   @Input() styleMusic = '';
   @Input() isFromSearch!: boolean;
@@ -36,9 +37,10 @@ export class DisplayMusicsComponent {
   {
     if(this.isMusicPlaying)
     {
-      this.spotifyService.stopMusic(this.audioUrl).subscribe((data)=>{
+      this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe((data)=>{
         if(data.statut === 1){
           this.currentPlayingMusic = null;
+          this.currentPlayingMusicStyle = null;
           this.selectedMusicIndex = null;
           this.isMusicPlaying = false;
           this.audioPlayer.pause();
@@ -115,7 +117,7 @@ export class DisplayMusicsComponent {
   listenToMusic(music: string, index: number) {
     //vérifer d'abord si une musique est en cours de lecture
     if(this.currentPlayingMusic){
-      this.spotifyService.stopMusic(this.audioUrl).subscribe((data)=>{
+      this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe((data)=>{
         if(data.statut === 1){
           this.currentPlayingMusic = null;
           this.selectedMusicIndex = null;
@@ -150,6 +152,7 @@ export class DisplayMusicsComponent {
       // Désabonnez-vous du flux ou effectuez d'autres nettoyages nécessaires
       // Réinitialisez le compteur de lecture à zéro
       this.currentPlayingMusic = null;
+      this.currentPlayingMusicStyle = null;
       this.selectedMusicIndex = null;
       this.isMusicPlaying = false;
       this.currentTime = '0:00'; // Réinitialisez le temps écoulé à zéro
@@ -166,6 +169,7 @@ export class DisplayMusicsComponent {
       this.audioPlayer.load(); // Charger la nouvelle source
       this.audioPlayer.onloadeddata = () => {
         this.currentPlayingMusic = music;
+        this.currentPlayingMusicStyle = this.styleMusic;
         this.isLoading = false;
         this.audioPlayer.play(); // Démarrer la lecture une fois que la nouvelle source est chargée
       };
@@ -202,7 +206,7 @@ export class DisplayMusicsComponent {
     }
   }
   stopMusic(music :any , i:number){
-    this.spotifyService.stopMusic(this.audioUrl).subscribe((data)=>{
+    this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe((data)=>{
       if(data.statut === 1){
         this.currentPlayingMusic = null;
         this.selectedMusicIndex = null;

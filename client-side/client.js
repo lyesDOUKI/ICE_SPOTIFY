@@ -10,6 +10,7 @@ const updateMusic = require('./ice/ice-updateMusic');
 const deleteMusic = require('./ice/ice-deleteMusic');
 const readMusic = require('./ice/ice-readMusic');
 const stopMusic = require('./ice/ice-stopMusic');
+const loadProxyAndEndPoint = require('./ice/ice-loadProxyAndEndPoints');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const https = require("https");
@@ -69,9 +70,11 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const titre = req.body.titre;
     const auteur = req.body.auteur;
     const annee = req.body.annee;
+    const proxy = loadProxyAndEndPoint.goodProxy(musicStyle);
+    const endPoint = loadProxyAndEndPoint.goodEndPoints(proxy);
     console.log("style de musique: ", musicStyle);
     try {
-        await traiterChanson(nomChanson, titre, auteur, annee, musicStyle);
+        await traiterChanson(nomChanson, titre, auteur, annee, musicStyle, proxy, endPoint);
         core.deleteAllFiles();
         res.status(200).json({ message: 'Fichier reçu avec succès', status : 200 }); // Renvoyer une réponse JSON
     } catch (error) {
@@ -82,8 +85,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 //récuperer la listes des musics styles
 app.get('/musics/:style', async (req, res) => {
     const style = req.params.style;
+    const proxy = loadProxyAndEndPoint.goodProxy(style);
+    const endPoint = loadProxyAndEndPoint.goodEndPoints(proxy);
     console.log("style de musique: ", style);
-    const musics = await loadMusicsByStyle(style);
+    const musics = await loadMusicsByStyle(style, proxy, endPoint);
     console.log("musics: ", musics);
     res.status(200).json(musics);
 });
@@ -98,8 +103,10 @@ app.put('/music', (req, res) => {
     console.log("titre: ", titre);
     console.log("style: ", style);
     console.log("annee: ", annee);
+    const proxy = loadProxyAndEndPoint.goodProxy(style);
+    const endPoint = loadProxyAndEndPoint.goodEndPoints(proxy);
     try {
-        updateMusic(oldName, titre, auteur, annee, style);
+        updateMusic(oldName, titre, auteur, annee, style, proxy, endPoint);
         res.status(200).json({ message: 'Fichier modifié avec succès', status : 200 }); // Renvoyer une réponse JSON
     } catch (error) {
         console.error(error);
@@ -110,8 +117,10 @@ app.put('/music', (req, res) => {
 app.delete('/music/:music/:style', (req, res) => {
     const music = req.params.music;
     const style = req.params.style;
+    const proxy = loadProxyAndEndPoint.goodProxy(style);
+    const endPoint = loadProxyAndEndPoint.goodEndPoints(proxy);
     try {
-        deleteMusic(music, style);
+        deleteMusic(music, style, proxy, endPoint);
         res.status(200).json({ message: 'Fichier supprimer', status : 200 }); // Renvoyer une réponse JSON
     }
     catch (error) {
@@ -122,15 +131,20 @@ app.delete('/music/:music/:style', (req, res) => {
 app.get('/ecouter/:music/:style', async (req, res) => {
     const musicName = req.params.music;
     const musicStyle = req.params.style;
-    const url = await readMusic(musicName, musicStyle);
+    const proxy = loadProxyAndEndPoint.goodProxy(musicStyle);
+    const endPoint = loadProxyAndEndPoint.goodEndPoints(proxy);
+    const url = await readMusic(musicName, musicStyle, proxy, endPoint);
     res.set('Content-Type', 'audio/mpeg');
     return res.status(200).json(url);
 });
 app.post('/stop', async (req, res) => {
     console.log("dans la route stop");
     const urlToStop = req.body.audioUrl;
+    const style = req.body.style;
+    const proxy = loadProxyAndEndPoint.goodProxy(style);
+    const endPoint = loadProxyAndEndPoint.goodEndPoints(proxy);
     console.log("stop music on url : ", urlToStop);
-    const result = await stopMusic(urlToStop);
+    const result = await stopMusic(urlToStop, proxy, endPoint);
     return res.status(200).json({statut : result});
 });
 app.get('/search/:chose/:query', async (req, res) => {

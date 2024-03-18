@@ -7,7 +7,6 @@ project(':Spotify') {
     
     dependencies {
         implementation 'com.zeroc:ice:3.7.2'
-        imlementation 'Ice.Plugin.IceSSL=IceSSL:com.zeroc.IceSSL.PluginFactory'
         implementation 'com.zeroc:icegrid:3.7.2'
         implementation 'uk.co.caprica:vlcj:4.4.4'
         implementation 'javazoom:jlayer:1.0.1'

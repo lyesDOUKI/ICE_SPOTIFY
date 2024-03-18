@@ -5,13 +5,13 @@ const Ice = require("ice").Ice;
 const Spotify = require("../generated/Spotify").Spotify;
 
 
-async function traiterChanson(nomChanson, titre, auteur, annee, musicStyle) {
+async function traiterChanson(nomChanson, titre, auteur, annee, musicStyle, proxy, endPoint) {
     let communicator;
     try {
         const fileData = traitementMP3.traitementMP3(nomChanson);
         
         communicator = Ice.initialize();
-        const base = communicator.stringToProxy("SpotifyAdapter:default -p 10000");
+        const base = communicator.stringToProxy(proxy + ":" + endPoint);
         const SpotifyManager = await Spotify.SpotifyManagerPrx.checkedCast(base);
         if(SpotifyManager) {
             console.log("Je récupère SpotifyManager");
