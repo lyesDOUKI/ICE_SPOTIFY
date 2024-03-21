@@ -13,7 +13,7 @@ public class MainServer {
             Identity id = Util.stringToIdentity(properties.getProperty("Identity"));
             System.out.println("Identity: " + id.name);
             System.out.println("program name: " + properties.getProperty("Ice.ProgramName"));
-            String endpoint = getEndpoint(id.name);
+            String endpoint = args[0];
             System.out.println("Endpoint: " + endpoint);
             ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints(
                     "Spotify", endpoint);
@@ -24,20 +24,6 @@ public class MainServer {
             System.out.println("Server started");
             adapter.activate();
             communicator.waitForShutdown();
-        }
-    }
-    public static String getEndpoint(String adapter){
-        switch (adapter){
-            case "spotify-1":
-                return "default -p 10001";
-            case "spotify-2":
-                return "default -p 10002";
-            case "spotify-3":
-                return "default -p 10003";
-            case "spotify-4":
-                return "default -p 10004";
-            default:
-                return "default -p 10000";
         }
     }
 }

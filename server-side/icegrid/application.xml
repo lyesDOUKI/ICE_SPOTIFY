@@ -8,6 +8,7 @@
       <server id="SpotifyServer-${index}" exe="java" activation="always">
         <option>-jar</option>
         <option>serverjava.jar</option>
+        <option>default -p 1000${index}</option>
         <adapter name="Spotify">
           <object identity="spotify-${index}" type="::Spotify::SpotifyManager" property="Identity"/>
         </adapter>

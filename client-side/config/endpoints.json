@@ -1,0 +1,7 @@
+
+{
+    "spotify-1": "default -p 10001",
+    "spotify-2": "default -p 10002",
+    "spotify-3": "default -p 10003",
+    "spotify-4": "default -p 10004"
+}
