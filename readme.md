@@ -22,11 +22,16 @@ Pour pousser le concepte d'architecture distribué, j'ai mis en place ICEGRID qu
 - Ouvrir le dossier client-side et lancer la commande : npm install pour installer les packages et dépendances node necessaires.
 - Lancer la commande : node client.js pour lancer le serveur.
 
-## serveur side 
-- Ouvrir le dossier server-side et accèder au dossier icegrid.
+## serveur side
+- ouvrir le fichier config.properties (dans server-side/serverjava/src/main/ressources/), modifier la variable destination.directory pour pointer vers le dossier data de server-side depuis votre machine.
+- Si vlc n'est pas installer dans votre C:\Program Files\VideoLAN\VLC, modifier la classe MainServer en mettant l'endroit de votre Vlc et lancer la commande gradle build, puis aller dans build/lib/ et copier le jar et mettez le dans le dossier iceGrid. 
+- accèder au dossier icegrid.
 - Lancer la commande : icegridnode --Ice.Config=config.grid ==> cette commande lancera le node IceGrid 
 - Lancer ensuite la commande : icegridadmin --Ice.Config=config.grid -e "application add application.xml" ==> cette commande va deployer le fichier application.xml sur le serveur IceGrid
--Pour pouvoir manager et voir l'état des différents serveur, accéder à la console icegrid avec la commande icegridadmin, user : admin, mot de passe : admin
-
+- Pour pouvoir manager et voir l'état des différents serveur, accéder à la console icegrid avec la commande icegridadmin, user : admin, mot de passe : admin
+- 
 ## Pour tester 
 - Ouvrir un navigateur, accèder à l'url : https://localhost:3000 et voilà !!!
+
+# Github
+- Je peux vous fournir une invitation pour avoir l'accès à mon code sur gitub, je reste à votre disposition.
