@@ -1,0 +1,16 @@
+# Configuration file (04/09/24 16:53:06.136)
+
+# Server configuration
+Ice.Admin.ServerId=SpotifyServer-4
+Ice.Admin.Endpoints=tcp -h localhost
+Ice.ProgramName=SpotifyServer-4
+# Object adapter Spotify
+Spotify.Endpoints=default
+Spotify.AdapterId=SpotifyServer-4.Spotify
+# Server descriptor properties
+Identity=spotify-4
+IceMX.Metrics.Debug.GroupBy=id
+IceMX.Metrics.Debug.Disabled=1
+IceMX.Metrics.ByParent.GroupBy=parent
+IceMX.Metrics.ByParent.Disabled=1
+Ice.Default.Locator=IceGrid/Locator:default -h localhost -p 4062
