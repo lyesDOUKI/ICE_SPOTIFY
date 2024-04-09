@@ -32,6 +32,3 @@ Pour pousser le concepte d'architecture distribué, j'ai mis en place ICEGRID qu
 - 
 ## Pour tester 
 - Ouvrir un navigateur, accèder à l'url : https://localhost:3000 et voilà !!!
-
-# Github
-- Je peux vous fournir une invitation pour avoir l'accès à mon code sur gitub, je reste à votre disposition.
