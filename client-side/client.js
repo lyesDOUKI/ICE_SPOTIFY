@@ -13,13 +13,7 @@ const stopMusic = require('./ice/ice-stopMusic');
 const loadProxyAndEndPoint = require('./ice/ice-loadProxyAndEndPoints');
 const { Server } = require("socket.io");
 const cors = require('cors');
-const https = require("https");
-const options = {
-    key: fs.readFileSync("./security/keyNode.key"),
-    cert: fs.readFileSync("./security/certificatNode.crt"),
-};
 const app = express();
-const httpApp = https.createServer(options, app);
 const PORT = 3000;
 const server = http.createServer(app);
 app.use(express.json());
@@ -65,6 +59,11 @@ app.get('/', (req, res) => {
 const core = require('./core/traitementMP3');
 // Gérer l'upload de fichiers
 app.post('/upload', upload.single('file'), async (req, res) => {
+    if (!req.file) {
+        console.log("Aucun fichier envoyé");
+        res.status(400).json({ error: 'Aucun fichier envoyé', status : 400 }); // Renvoyer une réponse JSON
+        return;
+    }
     const nomChanson = req.file.originalname;
     const musicStyle = req.body.musicStyle;
     const titre = req.body.titre;
@@ -160,6 +159,6 @@ io.on('connection', (socket) => {
     console.log('Un client s\'est connecté');
 });
 
-httpApp.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log("Le serveur est lancé sur le port : ", PORT);
 });

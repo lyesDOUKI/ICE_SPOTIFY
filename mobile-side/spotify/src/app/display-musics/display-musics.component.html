@@ -1,0 +1,105 @@
+<div class="container-fluid">
+  <div *ngIf="currentPlayingMusic" class="row current-playing-music">
+    <div class="col">
+      Musique en cours de lecture : {{ currentPlayingMusic }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col" *ngFor="let music of musicList; let i = index">
+      <div class="music-item">
+        <div class="d-flex align-items-center">
+          <div class="flex-grow-1">
+            <div class="title">{{ music.titre }}</div>
+            <div class="artist">{{ music.auteur }}  {{music.annee}}</div>
+          </div>
+          <div>
+            <button class="play-btn" (click)="togglePlayPause(music, i)">
+              <div *ngIf="isLoading && selectedMusicIndex === i" class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <div *ngIf="!isLoading">
+                <ng-container *ngIf="selectedMusicIndex === i && isMusicPlaying && music.titre === currentPlayingMusic">
+                  <!-- Si la musique est en cours de lecture -->
+                  &#10073;&#10073;
+                </ng-container>
+                <ng-container *ngIf="selectedMusicIndex === i && !isMusicPlaying">
+                  <!-- Si la musique est en pause -->
+                  &#9658;
+                </ng-container>
+                <ng-container *ngIf="selectedMusicIndex === i &&
+                           isMusicPlaying && music.titre !== currentPlayingMusic">
+                  <!-- Si la musique est en pause -->
+                  &#9658;
+                </ng-container>
+                <ng-container *ngIf="selectedMusicIndex !== i">
+                  <!-- Si une autre musique est sélectionnée -->
+                  &#9658;
+                </ng-container>
+              </div>
+            </button>
+            <!-- Bouton Stop -->
+            <button class="stop-btn" *ngIf="selectedMusicIndex === i && isMusicPlaying && music.titre === currentPlayingMusic"
+                    (click)="stopMusic(music, i)">
+              &#9632;
+            </button>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="flex-grow-1">
+            <!-- Intégration de l'élément audio-->
+            <div class="audio-container" #audioContainer>
+            </div>
+            <!-- Barre de volume -->
+            <div class="d-flex align-items-center">
+              <div class="volume-container me-3">
+                <!-- Barre de volume -->
+                <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volumeList[i]" (input)="setVolume(i)"
+                       [disabled]="selectedMusicIndex !== i || currentPlayingMusic !== music.titre" class="volume-bar">
+              </div>
+              <div class="action-icons"> <!-- Boutons d'action -->
+                <button class="action-icon edit-icon" (click)="openModal(music)">
+                  <!-- Icône de modification -->
+                  Modifier
+                </button>
+                <button class="action-icon delete-icon ms-2" (click)="deleteMusic(music.titre)">
+                  <!-- Icône de suppression -->
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" [ngClass]="{'open': showModal}" (click)="closeModalOutside($event)">
+  <div class="modal-content">
+    <!-- Contenu du modal -->
+    <h2>Modifier la musique</h2>
+    <form>
+      <div class="form-group">
+        <label for="title">Titre :</label>
+        <div class="input-container">
+          <input type="text" id="title" name="title" [(ngModel)]="newTitle" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="author">Auteur :</label>
+        <div class="input-container">
+          <input type="text" id="author" name="author" [(ngModel)]="newAuthor" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="year">Année :</label>
+        <div class="input-container">
+          <input type="text" id="year" name="year" [(ngModel)]="newYear" required>
+        </div>
+      </div>
+      <div>
+        <button class="upload-btn mt-3 me-3" type="submit" (click)="updateMusic()">Valider</button>
+        <button class="upload-btn" (click)="closeModal()">Fermer</button>
+      </div>
+    </form>
+  </div>
+</div>

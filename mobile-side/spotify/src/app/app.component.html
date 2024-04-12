@@ -1,3 +1,27 @@
-<ion-app>
-  <ion-router-outlet></ion-router-outlet>
-</ion-app>
+<ion-content>
+  <app-navbar></app-navbar>
+  <div class="container">
+    <!-- Navbar en haut -->
+
+    <!-- Upload Music Component en haut -->
+    <div class="row mt-4">
+      <div class="col-md-6 offset-md-3">
+        <div class="d-flex justify-content-center">
+          <app-upload-music></app-upload-music>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-md-6 offset-md-3">
+        <div class="music-list">
+            <app-display-musics *ngIf="showDisplayMusics"
+             [musicList]="musicList"
+             [styleMusic]="styleMusic"
+             [isFromSearch]="isFromSearch"
+             ></app-display-musics>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
