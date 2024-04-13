@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        p {
+            color: #666;
+            text-align: center;
+        }
+        .api-info {
+            margin-top: 30px;
+        }
+        .api-info p {
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenue sur l'API pour le NLP</h1>
+        <p>Cette API permet d'analyser une requête et déduire l'intention de l'utilisateur en utilisant la bibliothéque   <strong>spacy</strong>.</p>
+        
+        <div class="api-info">
+            <h2>Comment utiliser l'API :</h2>
+            <ol>
+                <li>Envoyez via la méthode GET un text à l'URL <strong>/nlp-process</strong>.</li>
+                <li>L'API déduira l'intetion de l'utilisateur.</li>
+                <li>L'API renverra le résultat action / objets sous forme de JSON.</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

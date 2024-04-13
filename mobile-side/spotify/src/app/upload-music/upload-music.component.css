@@ -31,6 +31,10 @@ font-size: 16px; /* Augmentation de la taille de la police */
 transition: background-color 0.3s ease;
 width: 100%;
 max-width: 200px; /* Réduction de la largeur maximale */
+-webkit-user-select: none; /* Chrome, Safari, Opera */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Standard syntax */
 }
 
 
