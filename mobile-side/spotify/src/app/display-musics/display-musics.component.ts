@@ -38,39 +38,58 @@ export class DisplayMusicsComponent {
   {
     if(this.isMusicPlaying)
     {
-      this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe((data: { statut: number; })=>{
-        if(data.statut === 1){
-          this.currentPlayingMusic = null;
-          this.currentPlayingMusicStyle = null;
-          this.selectedMusicIndex = null;
-          this.isMusicPlaying = false;
-          this.audioPlayer.pause();
-          this.audioPlayer.src = '';
-          this.audioPlayer.currentTime = 0;
+      this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe(
+        (data: { statut: number; }) => {
+          if(data.statut === 1){
+            this.currentPlayingMusic = null;
+            this.currentPlayingMusicStyle = null;
+            this.selectedMusicIndex = null;
+            this.isMusicPlaying = false;
+            this.audioPlayer.pause();
+            this.audioPlayer.src = '';
+            this.audioPlayer.currentTime = 0;
+          }
+        },
+        (error) => {
+          this.notification.showNotification("Une erreur est survenue lors de l'arrêt de la musique", "danger");
+          console.error("Erreur lors de l'arrêt de la musique :", error);
         }
-      });
+      );
+
     }
     this.isLoading = true;
-    this.spotifyService.updateMusic(this.oldName,
-      this.newTitle, this.newAuthor, this.newYear, this.styleMusic).subscribe(((response: { status: number; })=>{
-      if(response.status === 200){
-        this.closeModal();
-       if(this.isFromSearch)
-        {
-          this.updateBySearch();
-        }else{
-          this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe(((response: any[])=>{
-            if(response){
-              this.musicList = response;
-              this.notification.showNotification("Musique modifiée avec succès", "success");
-            }
-          }));
+    this.spotifyService.updateMusic(this.oldName, this.newTitle, this.newAuthor, this.newYear, this.styleMusic).subscribe(
+      (response: { status: number; }) => {
+        if(response.status === 200){
+          this.closeModal();
+          if(this.isFromSearch) {
+            this.updateBySearch();
+          } else {
+            this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe(
+              (response: any[]) => {
+                if(response){
+                  this.musicList = response;
+                  this.notification.showNotification("Musique modifiée avec succès", "success");
+                }
+              },
+              (error) => {
+                this.notification.showNotification("Une erreur est survenue lors du chargement des musiques", "danger");
+                console.error("Erreur lors du chargement des musiques :", error);
+              }
+            );
+          }
+        } else {
+          this.notification.showNotification("Échec de la modification de la musique", "danger");
         }
-      }else{
-        this.notification.showNotification("Echec de la modification de la musique", "danger");
+        this.isLoading = false;
+      },
+      (error) => {
+        this.notification.showNotification("Une erreur est survenue lors de la modification de la musique", "danger");
+        console.error("Erreur lors de la modification de la musique :", error);
+        this.isLoading = false;
       }
-      this.isLoading = false;
-    }));
+    );
+
   }
   constructor(private spotifyService : SpotifyCommService,
     private notification : NotificationService, private elementRef: ElementRef,
@@ -80,26 +99,37 @@ export class DisplayMusicsComponent {
   deleteMusic(music: string) {
     // Logique pour supprimer la musique
     this.isLoading = true;
-    this.spotifyService.deleteMusic(music, this.styleMusic).subscribe(((Response: { status: number; })=>{
-      if(Response.status === 200){
-        if(this.isFromSearch)
-        {
-          this.updateBySearch();
-        }else{
-          this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe(((response: any[])=>{
-            if(response){
-              this.musicList = response;
-              this.notification.showNotification("Musique supprimée avec succès", "success");
-            }
-          }));
+    this.spotifyService.deleteMusic(music, this.styleMusic).subscribe(
+      (response: { status: number; }) => {
+        if(response.status === 200){
+          if(this.isFromSearch) {
+            this.updateBySearch();
+          } else {
+            this.spotifyService.loadMusicsByStyle(this.styleMusic).subscribe(
+              (response: any[]) => {
+                if(response){
+                  this.musicList = response;
+                  this.notification.showNotification("Musique supprimée avec succès", "success");
+                }
+              },
+              (error) => {
+                this.notification.showNotification("Une erreur est survenue lors du chargement des musiques", "danger");
+                console.error("Erreur lors du chargement des musiques :", error);
+              }
+            );
+          }
+        } else {
+          this.notification.showNotification("Échec de la suppression de la musique", "danger");
         }
+        this.isLoading = false;
+      },
+      (error) => {
+        this.notification.showNotification("Une erreur est survenue lors de la suppression de la musique", "danger");
+        console.error("Erreur lors de la suppression de la musique :", error);
+        this.isLoading = false;
+      }
+    );
 
-    }else{
-      this.notification.showNotification("Echec de la suppression de la musique", "danger");
-    }
-    this.isLoading = false;
-  }
-    ));
   }
 
   editingMusic: string = ''; // Nom de la musique en cours d'édition
@@ -119,18 +149,25 @@ export class DisplayMusicsComponent {
   listenToMusic(music: string, index: number) {
     //vérifer d'abord si une musique est en cours de lecture
     if(this.currentPlayingMusic){
-      this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe((data: { statut: number; })=>{
-        if(data.statut === 1){
-          this.currentPlayingMusic = null;
-          this.selectedMusicIndex = null;
-          this.isMusicPlaying = false;
-          this.audioPlayer.pause();
-          this.audioPlayer.src = '';
-          this.audioPlayer.currentTime = 0;
-          this.lireMusique(music, index);
-          this.isMusicPlaying = true;
+      this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe(
+        (data: { statut: number; }) => {
+          if(data.statut === 1){
+            this.currentPlayingMusic = null;
+            this.selectedMusicIndex = null;
+            this.isMusicPlaying = false;
+            this.audioPlayer.pause();
+            this.audioPlayer.src = '';
+            this.audioPlayer.currentTime = 0;
+            this.lireMusique(music, index);
+            this.isMusicPlaying = true;
+          }
+        },
+        (error) => {
+          this.notification.showNotification("Une erreur est survenue lors de l'arrêt de la musique", "danger");
+          console.error("Erreur lors de l'arrêt de la musique :", error);
         }
-      });
+      );
+
     }else{
       this.lireMusique(music, index);
     }
@@ -162,29 +199,36 @@ export class DisplayMusicsComponent {
       this.audioPlayer.pause(); // Mettez en pause la lecture
       this.audioPlayer.src = ''; // Supprimez le src de l'élément audio
     });
-    this.spotifyService.lireMusic(music, this.styleMusic).subscribe((data: string) => {
-
-      this.audioUrl = data;
-      //this.streamingMedia.playAudio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
-      //this.audioUrl = this.audioUrl.replace("http://", "https://");
-      sourceElement.src = this.audioUrl;
-      this.audioPlayer.appendChild(sourceElement);
-      this.elementRef.nativeElement.appendChild(this.audioPlayer);
-      this.audioPlayer.load(); // Charger la nouvelle source
-      this.audioPlayer.onloadeddata = () => {
-        this.currentPlayingMusic = music;
-        this.currentPlayingMusicStyle = this.styleMusic;
+    this.spotifyService.lireMusic(music, this.styleMusic).subscribe(
+      (data: string) => {
+        this.audioUrl = data;
+        // this.streamingMedia.playAudio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
+        // this.audioUrl = this.audioUrl.replace("http://", "https://");
+        sourceElement.src = this.audioUrl;
+        this.audioPlayer.appendChild(sourceElement);
+        this.elementRef.nativeElement.appendChild(this.audioPlayer);
+        this.audioPlayer.load(); // Charger la nouvelle source
+        this.audioPlayer.onloadeddata = () => {
+          this.currentPlayingMusic = music;
+          this.currentPlayingMusicStyle = this.styleMusic;
+          this.isLoading = false;
+          console.log("Lecture ...");
+          this.audioPlayer.play(); // Démarrer la lecture une fois que la nouvelle source est chargée
+          console.log("Lecture OK");
+        };
+        this.audioPlayer.onerror = (error) => {
+          this.isLoading = false;
+          console.log("Erreur de lecture : " + JSON.stringify(error));
+          this.notification.showNotification("Impossible de lire la musique", "danger");
+        };
+      },
+      (error) => {
         this.isLoading = false;
-        console.log("lecture ...");
-        this.audioPlayer.play(); // Démarrer la lecture une fois que la nouvelle source est chargée
-        console.log("lecture OK");
-      };
-      this.audioPlayer.onerror = (error) => {
-        this.isLoading = false;
-        console.log("erreur de lecture ... : " + JSON.stringify(error));
-        this.notification.showNotification("Impossible de lire la musique", "danger");
+        console.error("Une erreur est survenue lors de la lecture de la musique :", error);
+        this.notification.showNotification("Une erreur est survenue lors de la lecture de la musique", "danger");
       }
-    });
+    );
+
   }
   formatTime(time: number): string {
     const minutes = Math.floor(time / 60);
@@ -217,18 +261,25 @@ export class DisplayMusicsComponent {
     }
   }
   stopMusic(music :any , i:number){
-    this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe((data: { statut: number; })=>{
-      if(data.statut === 1){
-        this.currentPlayingMusic = null;
-        this.selectedMusicIndex = null;
-        this.isMusicPlaying = false;
-        this.audioPlayer.pause();
-        this.currentTime = '0:00';
-        this.audioPlayer.currentTime = 0;
-        this.volumeList[i] = 0.5;
-        this.setVolume(i);
+    this.spotifyService.stopMusic(this.audioUrl, this.currentPlayingMusicStyle).subscribe(
+      (data: { statut: number; }) => {
+        if(data.statut === 1){
+          this.currentPlayingMusic = null;
+          this.selectedMusicIndex = null;
+          this.isMusicPlaying = false;
+          this.audioPlayer.pause();
+          this.currentTime = '0:00';
+          this.audioPlayer.currentTime = 0;
+          this.volumeList[i] = 0.5;
+          this.setVolume(i);
+        }
+      },
+      (error) => {
+        console.error("Une erreur est survenue lors de l'arrêt de la musique :", error);
+        this.notification.showNotification("Une erreur est survenue lors de l'arrêt de la musique", "danger");
       }
-    });
+    );
+
   }
   closeModalOutside(event: MouseEvent) {
     const targetElement = event.target as HTMLElement;
@@ -240,11 +291,18 @@ export class DisplayMusicsComponent {
   }
   updateBySearch()
   {
-    this.spotifyService.getMusicByChoix(this.spotifyService.getChoixSearch(), this.spotifyService.getQuerySearch()).subscribe((res: any[])=>{
-      if(res){
-        this.musicList = res;
-        this.notification.showNotification("Musique modifiée avec succès", "success");
+    this.spotifyService.getMusicByChoix(this.spotifyService.getChoixSearch(), this.spotifyService.getQuerySearch()).subscribe(
+      (res: any[]) => {
+        if(res){
+          this.musicList = res;
+          this.notification.showNotification("Musique récupérée avec succès", "success");
+        }
+      },
+      (error) => {
+        console.error("Une erreur est survenue lors de la récupération de la musique :", error);
+        this.notification.showNotification("Une erreur est survenue lors de la récupération de la musique", "danger");
       }
-    });
+    );
+
   }
 }

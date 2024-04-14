@@ -60,13 +60,20 @@ export class UploadMusicComponent {
           this.isLoading = false; // Cacher le spinner
           this.notificationService.showNotification('La chanson a été envoyée avec succès', 'success');
 
-        }else {
+        } else {
           this.isLoading = false; // Cacher le spinner
           this.notificationService.showNotification('Erreur lors de l\'envoi de la chanson', 'danger');
         }
         this.resetInput();
+      },
+      (error) => {
+        this.isLoading = false; // Cacher le spinner en cas d'erreur
+        this.resetInput();
+        this.notificationService.showNotification('Une erreur est survenue lors de l\'envoi de la chanson', 'danger');
+        console.error('Erreur lors de l\'envoi de la chanson :', error);
       }
     );
+
   }
   deleteUploadedFile() {
     const fileInput = document.getElementById('mp3file') as HTMLInputElement;
@@ -112,34 +119,46 @@ export class UploadMusicComponent {
         const recordedBlob = new Blob(this.chunks, { type: 'audio/mpeg' });
         const formData = new FormData();
         formData.append('file', recordedBlob);
-        this.asrService.uploadAudio(formData).subscribe((response) => {
-          if (response.status === 200) {
-            this.notificationService
-            .showNotification('L\'audio a été transcrit avec succès', 'success');
-            //analyser la requête
-            const request = response.body?.text;
-            this.analyseRequete(request);
-          } else {
-            this.notificationService
-            .showNotification('Erreur lors de la transcription de l\'audio', 'danger');
+        this.asrService.uploadAudio(formData).subscribe(
+          (response) => {
+            if (response.status === 200) {
+              this.notificationService.showNotification('L\'audio a été transcrit avec succès', 'success');
+              // Analyser la requête
+              const request = response.body?.text;
+              this.analyseRequete(request);
+            } else {
+              this.notificationService.showNotification('Erreur lors de la transcription de l\'audio', 'danger');
+            }
+          },
+          (error) => {
+            this.isLoadingSendVocal = false;
+            this.notificationService.showNotification('Une erreur est survenue lors de la transcription de l\'audio', 'danger');
+            console.error('Erreur lors de la transcription de l\'audio :', error);
           }
-        });
+        );
+
       });
     }
   }
 
   analyseRequete(request : string){
-    this.nlpService.analyseRequest(request).subscribe((response) => {
-      if (response.status === 200) {
+    this.nlpService.analyseRequest(request).subscribe(
+      (response) => {
+        if (response.status === 200) {
+          this.isLoadingSendVocal = false;
+          this.notificationService.showNotification('La requête a été analysée avec succès', 'success');
+          this.lancerLaMusique(response.body);
+        } else {
+          this.notificationService.showNotification('Erreur lors de l\'analyse de la requête', 'danger');
+        }
+      },
+      (error) => {
         this.isLoadingSendVocal = false;
-        this.notificationService
-        .showNotification('La requête a été analysée avec succès', 'success');
-        this.lancerLaMusique(response.body);
-      } else {
-        this.notificationService
-        .showNotification('Erreur lors de l\'analyse de la requête', 'danger');
+        this.notificationService.showNotification('Une erreur est survenue lors de l\'analyse de la requête', 'danger');
+        console.error('Erreur lors de l\'analyse de la requête :', error);
       }
-    });
+    );
+
   }
   lancerLaMusique(body : any)
   {
@@ -149,21 +168,28 @@ export class UploadMusicComponent {
     sourceElement.type = 'audio/mpeg';
     const titre = nlpDTO.objet.titre;
     const musicStyle = nlpDTO.objet.style;
-    this.spotifyService.lireMusic(titre, musicStyle).subscribe((data: string) => {
-      this.audioUrl = data;
-      sourceElement.src = this.audioUrl;
-      this.audioPlayer.appendChild(sourceElement);
-      this.elementRef.nativeElement.appendChild(this.audioPlayer);
-      this.audioPlayer.load(); // Charger la nouvelle source
-      this.audioPlayer.onloadeddata = () => {
-        this.audioPlayer.play(); // Démarrer la lecture une fois que la nouvelle source est chargée
-        this.notificationService.showNotification("lecture de la musique avec succes", "success");
-      };
-      this.audioPlayer.onerror = (error) => {
+    this.spotifyService.lireMusic(titre, musicStyle).subscribe(
+      (data: string) => {
+        this.audioUrl = data;
+        sourceElement.src = this.audioUrl;
+        this.audioPlayer.appendChild(sourceElement);
+        this.elementRef.nativeElement.appendChild(this.audioPlayer);
+        this.audioPlayer.load(); // Charger la nouvelle source
+        this.audioPlayer.onloadeddata = () => {
+          this.audioPlayer.play(); // Démarrer la lecture une fois que la nouvelle source est chargée
+          this.notificationService.showNotification("Lecture de la musique avec succès", "success");
+        };
+        this.audioPlayer.onerror = (error) => {
+          this.isLoading = false;
+          this.notificationService.showNotification("Impossible de lire la musique", "danger");
+        };
+      },
+      (error) => {
         this.isLoading = false;
-        this.notificationService
-        .showNotification("Impossible de lire la musique", "danger");
-            }
-    });
+        this.notificationService.showNotification("Une erreur est survenue lors de la lecture de la musique", "danger");
+        console.error("Erreur lors de la lecture de la musique :", error);
+      }
+    );
+
   }
 }
