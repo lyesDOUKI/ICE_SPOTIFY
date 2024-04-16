@@ -21,7 +21,7 @@ def nlp_process():
         'action': action,
         'objet': objet
     }
-    
+    print("la reponse : ", response)
     return jsonify(response)
 @app.route('/', methods=['GET'])
 def index():

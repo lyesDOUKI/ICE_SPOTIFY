@@ -11,7 +11,7 @@ actions = {
     2: ["stopper", "stoppe", "arrêter", "arrête", "quitter", "quitte", 
         "sortir", "sors"],
     3: ["supprimer", "supprime", "effacer", "efface"],
-    4:["pause", "pauser", "reprendre", "reprend", "continuer", "continue"]
+    4:["pause", "pauser", "reprendre", "reprend", "continuer", "continue", "reprends", "continues"]
 }
 
 def analyser_requete(requete):

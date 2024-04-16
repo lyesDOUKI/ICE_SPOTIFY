@@ -15,12 +15,15 @@ export class UploadMusicComponent {
   uploadedFileName: string | undefined;
   isLoading : boolean = false; // Variable pour afficher ou cacher le spinner
   isLoadingSendVocal : boolean = false;
+  isMusicEnCours : boolean = false;
+  isMusiqueArreter : boolean = false;
   selectedStyle: string = ''; // Variable pour stocker le style de musique sélectionné
   titre : string = "";
   auteur : string = "";
   annee : string = "";
   mediaRecorder: MediaRecorder | undefined;
   audioUrl : string = '';
+  styleDeLaMusiqueEnCours : string = '';
   @ViewChild('audioContainer') audioContainer!: ElementRef;
   audioPlayer!: HTMLAudioElement;
   chunks: Blob[] = [];
@@ -88,6 +91,11 @@ export class UploadMusicComponent {
     this.selectedStyle = "";
   }
   startRecording() {
+    //si une chanson est en cours, on baisse le volume
+    if(this.audioPlayer)
+    {
+      this.audioPlayer.volume = 0.1;
+    }
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
@@ -111,11 +119,14 @@ export class UploadMusicComponent {
   stopRecording() {
     if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
       this.mediaRecorder.stop();
-
       this.mediaRecorder.addEventListener('stop', () => {
         //activer le spinnner sur le boutton
         this.isLoadingSendVocal = true;
-
+        //on remet le volume de la musique à 1
+        if(this.audioPlayer)
+        {
+          this.audioPlayer.volume = 1;
+        }
         const recordedBlob = new Blob(this.chunks, { type: 'audio/mpeg' });
         const formData = new FormData();
         formData.append('file', recordedBlob);
@@ -147,7 +158,7 @@ export class UploadMusicComponent {
         if (response.status === 200) {
           this.isLoadingSendVocal = false;
           this.notificationService.showNotification('La requête a été analysée avec succès', 'success');
-          this.lancerLaMusique(response.body);
+          this.deduireAction(response.body);
         } else {
           this.notificationService.showNotification('Erreur lors de l\'analyse de la requête', 'danger');
         }
@@ -160,22 +171,50 @@ export class UploadMusicComponent {
     );
 
   }
+  deduireAction(body : any){
+   switch(body.action)
+    {
+      case 1:
+        this.lancerLaMusique(body);
+        break;
+      case 2:
+        this.arreterLaMusique(body);
+        break;
+      case 3:
+        this.supprimerMusique(body);
+        break;
+      case 4:
+        this.PauseReprendreLaMusique(body);
+        break;
+      default:
+        this.notificationService.showNotification("Action non reconnue", "danger");
+    }
+  }
   lancerLaMusique(body : any)
   {
     const nlpDTO = new NlpDTO(body.action, body.objet);
     this.audioPlayer = new Audio();
     const sourceElement = document.createElement('source');
     sourceElement.type = 'audio/mpeg';
-    const titre = nlpDTO.objet.titre;
-    const musicStyle = nlpDTO.objet.style;
+    const titre = nlpDTO.objet === null ? null : nlpDTO.objet.titre;
+    const musicStyle = nlpDTO.objet === null ? null : nlpDTO.objet.style;
+    if(musicStyle === null || titre === null)
+    {
+      this.notificationService
+      .showNotification("Interprétation erronée de l'action demandée, veuillez réessayer", "danger");
+      return;
+    }
     this.spotifyService.lireMusic(titre, musicStyle).subscribe(
       (data: string) => {
         this.audioUrl = data;
+        this.styleDeLaMusiqueEnCours = musicStyle;
+        this.isMusiqueArreter = false;
         sourceElement.src = this.audioUrl;
         this.audioPlayer.appendChild(sourceElement);
         this.elementRef.nativeElement.appendChild(this.audioPlayer);
         this.audioPlayer.load(); // Charger la nouvelle source
         this.audioPlayer.onloadeddata = () => {
+          this.isMusicEnCours = true;
           this.audioPlayer.play(); // Démarrer la lecture une fois que la nouvelle source est chargée
           this.notificationService.showNotification("Lecture de la musique avec succès", "success");
         };
@@ -191,5 +230,90 @@ export class UploadMusicComponent {
       }
     );
 
+  }
+  arreterLaMusique(body : any)
+  {
+    // Arrêter la musique dans un premier temps
+    if(this.audioPlayer)
+    {
+      this.audioPlayer.pause();
+      this.isMusicEnCours = false;
+      const nlpDTO = new NlpDTO(body.action, body.objet);
+      //faire une requete d arret vers le serveur de streaming
+      const style = nlpDTO.objet === null ? this.styleDeLaMusiqueEnCours : nlpDTO.objet.style;
+      if(style === null)
+      {
+        this.notificationService.showNotification("Interprétation erronée de l'action demandée, veuillez réessayer", "danger");
+        return;
+      }
+      this.spotifyService.stopMusic(this.audioUrl, style).subscribe(
+        (response) => {
+          if(response.statut === 1) {
+            this.notificationService.showNotification("Musique arrêtée avec succès", "success");
+            this.isMusiqueArreter = true;
+          } else {
+            this.notificationService.showNotification("Erreur lors de l'arrêt de la musique", "danger");
+          }
+        },
+        (error) => {
+          this.notificationService.showNotification("Une erreur est survenue lors de l'arrêt de la musique", "danger");
+          console.error("Erreur lors de l'arrêt de la musique :", error);
+        }
+      );
+    }
+    else
+    {
+      this.notificationService.showNotification("Aucune musique en cours de lecture", "danger");
+    }
+  }
+  supprimerMusique(body : any)
+  {
+    //arreter d'abort la musique si elle est en cours
+    if(this.audioPlayer)
+    {
+      this.audioPlayer.pause();
+      this.isMusicEnCours = false;
+    }
+    const nlpDTO = new NlpDTO(body.action, body.objet);
+    const titre = nlpDTO.objet === null ? null : nlpDTO.objet.titre;
+    const style = nlpDTO.objet === null ? null : nlpDTO.objet.style;
+    if(titre === null || style === null)
+    {
+      this.notificationService.showNotification("Interprétation erronée de l'action demandée, veuillez réessayer", "danger");
+      return;
+    }
+    this.spotifyService.deleteMusic(titre, style).subscribe(
+      (response) => {
+        if(response.status === 200) {
+          this.notificationService.showNotification("Musique supprimée avec succès", "success");
+        } else {
+          this.notificationService.showNotification("Erreur lors de la suppression de la musique", "danger");
+        }
+      },
+      (error) => {
+        this.notificationService.showNotification("Une erreur est survenue lors de la suppression de la musique", "danger");
+        console.error("Erreur lors de la suppression de la musique :", error);
+      }
+    );
+  }
+  PauseReprendreLaMusique(body : any)
+  {
+    if(this.audioPlayer && !this.isMusiqueArreter)
+    {
+      if(this.audioPlayer.paused)
+      {
+        this.audioPlayer.play();
+        this.notificationService.showNotification("Musique reprise avec succès", "success");
+      }
+      else
+      {
+        this.audioPlayer.pause();
+        this.notificationService.showNotification("Musique en pause", "success");
+      }
+    }
+    else
+    {
+      this.notificationService.showNotification("Aucune musique en cours de lecture", "danger");
+    }
   }
 }

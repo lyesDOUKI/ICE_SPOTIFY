@@ -27,7 +27,9 @@ import { MediaCapture } from '@ionic-native/media-capture/ngx';
       IonicModule.forRoot(),
         AppRoutingModule,
         FormsModule,
-        ToastrModule.forRoot(),
+        ToastrModule.forRoot({
+          positionClass: 'toast-top-center'
+        }),
         HttpClientModule,
         BrowserAnimationsModule
       ],
